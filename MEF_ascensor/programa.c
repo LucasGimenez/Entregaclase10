@@ -60,11 +60,12 @@ typedef enum{
 } estadoMEFASC_t;
 
 typedef enum{
-	PUERTA_CERRADA,		// 0
-	ABRIENDO_PUERTA,	// 1
-	PUERTA_ABIERTA,		// 2
-	CERRANDO_PUERTA,	// 3
-	ALARMA_PUERTA_ABIERTA	// 4
+	PUERTA_CERRADA,			// 0
+	ABRIENDO_PUERTA,		// 1
+	PUERTA_ABIERTA,			// 2
+	INTENTANDO_CERRAR_PUERTAS,	// 3
+	CERRANDO_PUERTA,		// 4
+	ALARMA_PUERTA_ABIERTA		// 5
 } estadoMEFAbreCierraPuerta_t;
 
 
@@ -79,10 +80,10 @@ typedef enum{
 #define TALARMAPUERTA	500
 
 // Tiempo durante el cual estara a puerta abierta, 2 segundos.
-#define TPUETAABIERTA	2000
+#define TPUETAABIERTA	5000
 
 // Tiempo de espera para retornar a la Planta Baja. 5000 = 5 segundos.
-#define TRETORNOPB	5000
+#define TRETORNOPB	10000
 
 
 
@@ -94,6 +95,12 @@ typedef enum{
 /*==================[definiciones de datos externos]=========================*/
 
 /*==================[definiciones de datos globales]=========================*/
+//SACAR ESTAS VARIABLES
+int8_t pideNuevoPiso = 0;
+int8_t pideConfiguracion = 0;
+uint8_t numeroEnString[10];
+
+
 
 // Variable que inidca el estado del ascensor (global)
 estadoMEFASC_t estadoActualAsc;
@@ -108,10 +115,10 @@ int8_t pisoActual = 0;
 int8_t pisoDestino = 0;
 
 // Velocidad del ascensor 1000 = 1seg. Puede cambiar por Configuracion externa
-uint16_t velPisoPiso = 1000;
+uint16_t velPisoPiso = 5000;
 
 // Velocidad de apertura y cierre de puerta 1000 = 1s.Puede cambiar por Configuracion externa
-uint16_t velAbreCierraPuerta = 1000;
+uint16_t velAbreCierraPuerta = 2000;
 
 // Indica el numero de pisos. Puede cambiar por Configuracion externa
 uint8_t maximoDePisos =  20;
@@ -120,24 +127,41 @@ uint8_t maximoDePisos =  20;
 uint8_t MaximoDeSubsuelos = 2;
 
 volatile uint32_t flag1DW = 0;
-// Bit 0  Indica en 1 que se ehecuto el bloque de ejecucion unica del estado PARADO del ascensor.
+// Bit 0  Indica en 1 que se ejecuto el bloque de ejecucion unica del estado PARADO del ascensor.
+// Bit 1  En 1 indica el pedido de ejecucion de la secuencia de apertura de puertas.
+// Bit 2  En 1 indica el pedido de ejecucion de la secuencia de cierre de puertas.
+// Bit 3  En 1 ya se solicito apertura de las puertas en PB.
+
 
 // Bit 31
 #define Set_AscParadoFlag	setbit32(flag1DW, 0)
 #define Clr_AscParadoFlag	clrbit32(flag1DW, 0)
 #define Ask_AscParadoFlag	querybit32(flag1DW, 0)
+#define Set_AbrePuertasFlag	setbit32(flag1DW, 1)
+#define Clr_AbrePuertasFlag	clrbit32(flag1DW, 1)
+#define Ask_AbrePuertasFlag	querybit32(flag1DW, 1)
+#define Set_CierraPuertasFlag	setbit32(flag1DW, 2)
+#define Clr_CierraPuertasFlag	clrbit32(flag1DW, 2)
+#define Ask_CierraPuertasFlag	querybit32(flag1DW, 2)
+#define Set_PidioAperturaFlag	setbit32(flag1DW, 3)
+#define Clr_PidioAperturaFlag	clrbit32(flag1DW, 3)
+#define Ask_PidioAperturaFlag	querybit32(flag1DW, 3)
 
 
 // Variable para manejo parpadeo led alarma.
 delay_t timAlarPuerta;
-// Variable para manejo del tiempo de apertura de la puerta.
-delay_t timAbrePuerta;
-// Variable para manejo del tiempo de cierre de la puerta.
-delay_t timCierraPuerta;
+// Variable para manejo del tiempo de apertura/cierre de la puerta.
+delay_t timAbreCierraPuerta;
+// Variable para manejo del tiempo que queda la puerta abierta.
+delay_t timPuertaAbierta;
 // Variable para manejo del tiempo que tardada el ascensor en desplazarse de un piso a otro.
 delay_t timPisoPiso;
 // Variable para manejo del tiempo que espera para retornar a la planta baja.
 delay_t timRetornoPB;
+
+
+
+delay_t timSerial;
 
 
 /*==================[declaraciones de funciones internas]====================*/
@@ -149,8 +173,8 @@ void ActualizarMEFAsc(void);
 void InicializarMEFPuerta(void);
 void ActualizaMEFPuerta(void);
 
-
-
+void EstadoInterno(void);
+char* itoa(int value, char* result, int base);
 
 
 
@@ -181,6 +205,9 @@ InicializarMEFPuerta();
 
 
 
+// UART_USB a 115200 baudios.
+uartConfig( UART_USB, 115200 );
+delayConfig(&timSerial, 200);   
 
 
 // ---------- REPETIR POR SIEMPRE --------------------------
@@ -194,6 +221,20 @@ while(TRUE)
 ActualizarMEFAsc();
 
 
+// Función Actualizar MEF de las Puertas.
+ActualizaMEFPuerta();
+
+
+if (delayRead(&timSerial))
+	{
+	EstadoInterno();
+	
+	if (!gpioRead(TEC4))
+		{
+		pideNuevoPiso = 1;
+		pisoDestino = 5;
+		}
+	}
 
 
 
@@ -218,6 +259,7 @@ void InicializarMEFAsc(void)
 {
 // Estado inicial.
 estadoActualAsc = EN_PLANTA_BAJA;
+gpioWrite (LED_PBDETENIDO, 1);
 
 
 // Se Configura el tiempo de desplazamiento del ascensor.
@@ -251,14 +293,19 @@ estadoActualPuerta = PUERTA_CERRADA;
 delayConfig(&timAlarPuerta, TALARMAPUERTA);   
 
 // Se configura tiempo de apertura de la puerta.
-delayConfig(&timAbrePuerta, velAbreCierraPuerta);   
+delayConfig(&timAbreCierraPuerta, velAbreCierraPuerta);   
 
-// Se configura tiempo de cierre de la puerta.
-delayConfig(&timCierraPuerta, velAbreCierraPuerta);   
+// Se configura tiempo que queda la puerta abierta.
+delayConfig(&timPuertaAbierta, TPUETAABIERTA);   
+
+// Se configura tiempo que espera antes de retornar a Planta Baja.
+delayConfig(&timRetornoPB, TRETORNOPB);
 
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
+
+
 
 
 
@@ -271,187 +318,194 @@ void ActualizarMEFAsc(void)
 switch(estadoActualAsc)
 	{
 	case EN_PLANTA_BAJA:
-		// AL INGRESAR AL EL ESTADO SE EJECUTA POR UNICA VEZ:
-		// Apertura de puertas.
-
-		gpioWrite (LED_PBDETENIDO, 1);
+		// Se solicita la apertura de puertas, una sola vez.
+		if (!Ask_PidioAperturaFlag)
+			{
+			Set_PidioAperturaFlag;
+			Set_AbrePuertasFlag;
+			}
 
 		
 		// CAMBIO DE ESTADO:
-		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando.
-		// VER!!! es mismo piso.
-		if (0)//COMPLETAR!!!
+		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando;
+		// VER!!! si es el mismo  piso; tambien se tendria que fijar piso destino.
+		if (pideNuevoPiso)//COMPLETAR!!!
 			{
+			if (estadoActualPuerta == PUERTA_ABIERTA)
+				Set_CierraPuertasFlag;			// Pide cerrar puertas.
 			
-			if (pisoActual < pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
+			
+			if (estadoActualPuerta == PUERTA_CERRADA)
 				{
-				// Ante un cambio de estado se ejecuta el cierre de las puertas.
-				// Si se cerraron las puertas cambia de estado.
-				
-				// El piso destino se encuentra arriba.
-				estadoActualAsc = SUBIENDO;
-				gpioWrite (LED_PBDETENIDO, 0);
-				gpioWrite (LED_ASCMOVIENDO, 1);
-				}
-			else	{
-				// Ante un cambio de estado se ejecuta el cierre de las puertas.
-				// Si se cerraron las puertas cambia de estado.
-				
-				// El piso destino se encuentra abajo.
-				estadoActualAsc = BAJANDO;
-				gpioWrite (LED_PBDETENIDO, 0);
-				gpioWrite (LED_ASCMOVIENDO, 1);
+				if (pisoActual < pisoDestino)
+					{
+					
+					// El piso destino se encuentra arriba.
+					estadoActualAsc = SUBIENDO;
+					Clr_PidioAperturaFlag;
+					}
+				else	{
+					// Ante un cambio de estado se ejecuta el cierre de las puertas.
+					Set_CierraPuertasFlag;
+					// El piso destino se encuentra abajo.
+					estadoActualAsc = BAJANDO;
+					Clr_PidioAperturaFlag;
+					}
 				}
 			}
 		
 		// Se consulta si pide modo Configuracion.
-		if (0)//COMPLETAR!!!
+		if (pideConfiguracion)//COMPLETAR!!!
 			{
-			
-			// Ante un cambio de estado se ejecuta el cierre de las puertas.
-			
-			// Si se cerraron las puertas cambia de estado.
 			estadoActualAsc = MODO_CONFIGURACION;
-		
 			}
 
 		break;
 			
 	case SUBIENDO:
-		// SALIDA EN EL ESTADO:
-		// Se hace subir el ascensor, demorara en subir lo configurado en "velPisoPiso".
-		if (delayRead(&timPisoPiso))
+		// Se cerraron las puertas cambia de estado?
+		if (estadoActualPuerta == PUERTA_CERRADA)
 			{
-			pisoActual = pisoActual + 1;		// VER RANGOS!!!
-			//Se consulta si llego.
-			if (pisoActual == pisoDestino)		//COMPLETAR!!!
+			gpioWrite (LED_PBDETENIDO, 0);
+			gpioWrite (LED_ASCMOVIENDO, 1);
+	
+			// SALIDA EN EL ESTADO:
+			// Se hace subir el ascensor, demorara en subir lo configurado en "velPisoPiso".
+			if (delayRead(&timPisoPiso))
 				{
-				// CAMBIO DE ESTADO:
-				estadoActualAsc = PARADO;
-				gpioWrite (LED_ASCMOVIENDO, 0);
-				gpioWrite (LED_PBDETENIDO, 1);
+				pisoActual = pisoActual + 1;
+				//Se consulta si llego.
+				if (pisoActual == pisoDestino)
+					{
+					// CAMBIO DE ESTADO:
+					estadoActualAsc = PARADO;
+					gpioWrite (LED_ASCMOVIENDO, 0);
+					gpioWrite (LED_PBDETENIDO, 1);
+					}
 				}
 			}
 		break;
 
 	case BAJANDO:
-		
-		// SALIDA EN EL ESTADO:
-		// Se hace bajar el ascensor, demorara en subir lo configurado en "velPisoPiso".
-		if (delayRead(&timPisoPiso))
+		// Se cerraron las puertas cambia de estado?
+		if (estadoActualPuerta == PUERTA_CERRADA)
 			{
-			pisoActual = pisoActual - 1;		// VER RANGOS!!!
-			//Se consulta si llego.
-			if (pisoActual == pisoDestino)		//COMPLETAR!!!
+			gpioWrite (LED_PBDETENIDO, 0);
+			gpioWrite (LED_ASCMOVIENDO, 1);
+		
+			// SALIDA EN EL ESTADO:
+			// Se hace bajar el ascensor, demorara en subir lo configurado en "velPisoPiso".
+			if (delayRead(&timPisoPiso))
 				{
-				// CAMBIO DE ESTADO:
-				estadoActualAsc = PARADO;
-				gpioWrite (LED_ASCMOVIENDO, 0);
-				gpioWrite (LED_PBDETENIDO, 1);
+				pisoActual = pisoActual - 1;
+				//Se consulta si llego.
+				if (pisoActual == pisoDestino)
+					{
+					// CAMBIO DE ESTADO:
+					estadoActualAsc = PARADO;
+					gpioWrite (LED_ASCMOVIENDO, 0);
+					gpioWrite (LED_PBDETENIDO, 1);
+					}
 				}
-			}		
+			}
 		break;
 
 	case PARADO:
 		// AL INGRESAR AL EL ESTADO SE EJECUTA POR UNICA VEZ:
 		if (!Ask_AscParadoFlag)
 			{
-			Set_AscParadoFlag;
-			// Se pasa a MEF de las puertas que ejecuta una secuencia completa de apertura y cierre de puertas con las condiciones intermedias.
-			
-			
-			// Se inicializa temporizador, el cual permitira que al cabo de x tiempo el ascensor regrese automaticamente a la planta baja.
-			delayConfig(&timRetornoPB, TRETORNOPB);   // ANALIZAR!!!
-			}
-		
-		
-				
-		// CAMBIO DE ESTADO:
-		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando.
-		if (0)//COMPLETAR!!!
-			{
-			Clr_AscParadoFlag;
-			if (pisoActual < pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
+			if (estadoActualPuerta == PUERTA_CERRADA)
+				Set_AbrePuertasFlag;			// MEF ascensor solicita apertura de puertas
+			else if (estadoActualPuerta == PUERTA_ABIERTA)
 				{
-				// Ante un cambio de estado se ejecuta el cierre de las puertas.
-				// Si se cerraron las puertas cambia de estado.
-				
-				// El piso se encuentra arriba.
-				estadoActualAsc = SUBIENDO;
-				gpioWrite (LED_PBDETENIDO, 0);
-				gpioWrite (LED_ASCMOVIENDO, 1);
-				}
-			else	{
-				// Ante un cambio de estado se ejecuta el cierre de las puertas.
-				// Si se cerraron las puertas cambia de estado.
-				
-				// El piso se encuentra abajo.
-				estadoActualAsc = BAJANDO;
-				gpioWrite (LED_PBDETENIDO, 0);
-				gpioWrite (LED_ASCMOVIENDO, 1);
+				Set_CierraPuertasFlag;			// MEF ascensor solicita cierre de puertas
+				Set_AscParadoFlag;
 				}
 			}
-		
-		//VER!!! si esta en plata baja!
-		// Se consulta si hay que ir a PB por tiempo.
-		if (delayRead(&timRetornoPB))
+			
+		else if (estadoActualPuerta == PUERTA_CERRADA)
 			{
-			Clr_AscParadoFlag;
-			estadoActualAsc = YENDO_A_PLANTA_BAJA;
-			pisoDestino = 0;
-			gpioWrite (LED_PBDETENIDO, 0);
-			gpioWrite (LED_ASCMOVIENDO, 1);
+			// CAMBIO DE ESTADO:
+			// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando.
+			if (0)//COMPLETAR!!!
+				{
+				Clr_AscParadoFlag;
+				if (pisoActual < pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
+					{
+					// El piso se encuentra arriba.
+					estadoActualAsc = SUBIENDO;
+					gpioWrite (LED_PBDETENIDO, 0);
+					gpioWrite (LED_ASCMOVIENDO, 1);
+					}
+				else	{
+					// El piso se encuentra abajo.
+					estadoActualAsc = BAJANDO;
+					gpioWrite (LED_PBDETENIDO, 0);
+					gpioWrite (LED_ASCMOVIENDO, 1);
+					}
+				}
+			
+			//VER!!! si esta en plata baja!
+			// Se consulta si hay que ir a PB por tiempo.
+			if (delayRead(&timRetornoPB))
+				{
+				Clr_AscParadoFlag;
+				estadoActualAsc = YENDO_A_PLANTA_BAJA;
+				pisoDestino = 0;
+				gpioWrite (LED_PBDETENIDO, 0);
+				gpioWrite (LED_ASCMOVIENDO, 1);
+				
+				pideNuevoPiso = 0;			// SACAR!!!
+				}
 			}
-	
 		break;
 
 	case YENDO_A_PLANTA_BAJA:
-		// SALIDA EN EL ESTADO:
-		// Se hace bajar o subir el ascensor, demorara en subir lo configurado en "velPisoPiso"
-		
-		if (pisoActual > pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
-				{
-				// El piso actual se encuentra arriba.
-				if (delayRead(&timPisoPiso))
-					pisoActual = pisoActual - 1;		// VER RANGOS!!!
-				}
-		else if (pisoActual < pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
-				{
-				// El piso actual se encuentra abajo.
-				if (delayRead(&timPisoPiso))
-					pisoActual = pisoActual + 1;		// VER RANGOS!!!
-
-				}
-		
-	
 		// CAMBIO DE ESTADO:
-		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando.
-		// VER!!! es mismo piso.
-		if (0)//COMPLETAR!!!
+		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando;
+		// VER!!! si es el mismo  piso; tambien se tendria que fijar piso destino.
+		if (pideNuevoPiso)//COMPLETAR!!!
 			{
-			
-			if (pisoActual < pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
+			if (pisoActual < pisoDestino)
 				{
 				// Ante un cambio de estado se ejecuta el cierre de las puertas.
-				// Si se cerraron las puertas cambia de estado.
-				
+				Set_CierraPuertasFlag;
 				// El piso destino se encuentra arriba.
 				estadoActualAsc = SUBIENDO;
+				Clr_PidioAperturaFlag;
 				}
 			else	{
 				// Ante un cambio de estado se ejecuta el cierre de las puertas.
-				// Si se cerraron las puertas cambia de estado.
-				
+				Set_CierraPuertasFlag;
 				// El piso destino se encuentra abajo.
 				estadoActualAsc = BAJANDO;
+				Clr_PidioAperturaFlag;
 				}
 			}
 
+		// SALIDA EN EL ESTADO:
+		// Se hace bajar o subir el ascensor, demorara en subir lo configurado en "velPisoPiso"
+		if (pisoActual > 0) //COMPLETAR!!! no tendria que venir el mismo piso...
+			{
+			// El piso actual se encuentra arriba.
+			if (delayRead(&timPisoPiso))
+				pisoActual = pisoActual - 1;
+			}
+		else if (pisoActual < 0) 
+			{
+			// El piso actual se encuentra abajo.
+			if (delayRead(&timPisoPiso))
+				pisoActual = pisoActual + 1;
+
+			}
+		
+		// CAMBIO DE ESTADO:
 		// Se consulta si llego a PB
-		if (pisoActual == pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
+		if (pisoActual == 0)
 			{
 			gpioWrite (LED_ASCMOVIENDO, 0);
 			estadoActualAsc = EN_PLANTA_BAJA;
+			gpioWrite (LED_PBDETENIDO, 1);
 			}
 
 		break;
@@ -464,7 +518,7 @@ switch(estadoActualAsc)
 	
 		// CAMBIO DE ESTADO:
 		// Se completo la configuracion.
-
+		estadoActualAsc = EN_PLANTA_BAJA;
 		break;
 
 		
@@ -492,10 +546,11 @@ switch(estadoActualPuerta)
 	{
 	case PUERTA_CERRADA:
 		// CAMBIO DE ESTADO:
-		// MEF ascensor solicita apertura de puertas.
-		if (0)//COMPLETAR!!!
+		// MEF ascensor solicita apertura de puertas?
+		if (Ask_AbrePuertasFlag)
 			{
-			estadoActualAsc = ABRIENDO_PUERTA;
+			Clr_AbrePuertasFlag;
+			estadoActualPuerta = ABRIENDO_PUERTA;
 			gpioWrite(LED_ABRIENDOPUERTA, 1);
 			}
 		break;
@@ -503,36 +558,51 @@ switch(estadoActualPuerta)
 	case ABRIENDO_PUERTA:
 		// CAMBIO DE ESTADO:
 		// Se cumplio tiempo de apertura?
-		if (delayRead(&timAbrePuerta))
+		if (delayRead(&timAbreCierraPuerta))
 			{
-			estadoActualAsc = PUERTA_ABIERTA;
+			estadoActualPuerta = PUERTA_ABIERTA;
 			gpioWrite(LED_ABRIENDOPUERTA, 0);
 			gpioWrite(LED_PUERTAABIERTA, 1);
+			delayRead(&timPuertaAbierta);
 			}
 		break;
 
 	case PUERTA_ABIERTA:
 		// CAMBIO DE ESTADO:
-		// MEF ascensor solicita apertura de puertas.
-		if (0)//COMPLETAR!!!
+		// MEF ascensor solicita cierre de puertas y paso el tiempo que tiene que estar abierta la puerta?
+		if (Ask_CierraPuertasFlag && delayRead(&timPuertaAbierta))
 			{
-			estadoActualAsc = CERRANDO_PUERTA;
+			Clr_CierraPuertasFlag;
+			estadoActualPuerta = INTENTANDO_CERRAR_PUERTAS;
 			gpioWrite(LED_PUERTAABIERTA, 0);
-			gpioWrite(LED_CERRANDOPUERTA, 1);
+			
 			}
 		break;
 
+	case INTENTANDO_CERRAR_PUERTAS:
+		// CAMBIO DE ESTADO:
+		// Hay gente?
+		if (!gpioRead(TEC1))
+			estadoActualPuerta = ALARMA_PUERTA_ABIERTA;	// Hay gente.
+		else	{
+			estadoActualPuerta = CERRANDO_PUERTA;		// No hay gente.
+			gpioWrite(LED_CERRANDOPUERTA, 1);
+			}
+	
+		break;
+	
+	
 	case CERRANDO_PUERTA:
 		// CAMBIO DE ESTADO:
 		// Se cumplio tiempo de cierre? 
-		if (delayRead(&timCierraPuerta))
+		if (delayRead(&timAbreCierraPuerta))
 			{
+			estadoActualPuerta = PUERTA_CERRADA;
 			gpioWrite(LED_CERRANDOPUERTA, 0);
-			// Hay gente?
-			if (!gpioRead(TEC1))
-				estadoActualAsc = ALARMA_PUERTA_ABIERTA;	// Hay gente.
-			else estadoActualAsc = PUERTA_CERRADA;			// No hay gente.
 			}
+		// Hay gente?
+		if (!gpioRead(TEC1))
+			estadoActualPuerta = ABRIENDO_PUERTA;	// Hay gente.
 		break;
 
 	case ALARMA_PUERTA_ABIERTA:
@@ -544,7 +614,7 @@ switch(estadoActualPuerta)
 		// Hay gente?
 		if (gpioRead(TEC1))
 			{
-			estadoActualAsc = PUERTA_CERRADA;	// No hay gente.
+			estadoActualPuerta = CERRANDO_PUERTA;	// No hay gente.
 			gpioWrite(LED_ALARMAPABIERTA, 0);
 			}
 		break;
@@ -559,6 +629,150 @@ switch(estadoActualPuerta)
 //*********************************************************************************************************************
 //*********************************************************************************************************************
 
+
+
+
+
+
+//*********************************************************************************************************************
+//
+//*********************************************************************************************************************
+void EstadoInterno(void)
+{
+
+
+uartWriteString(UART_USB, "Piso Actual = ");
+itoa( pisoActual, numeroEnString, 10);         
+uartWriteString( UART_USB, numeroEnString );  
+uartWriteString( UART_USB, "\r\n" );  
+	
+
+uartWriteString(UART_USB, "estadoActualAsc = ");
+switch(estadoActualAsc)
+	{
+	case EN_PLANTA_BAJA:
+		uartWriteString(UART_USB, "En Planta Baja\r\n");
+	
+		break;
+			
+	case SUBIENDO:
+		uartWriteString(UART_USB, "Subiendo\r\n");
+	
+		break;
+
+	case BAJANDO:
+		uartWriteString(UART_USB, "Bajando\r\n");	
+	
+		break;
+
+	case PARADO:
+		uartWriteString(UART_USB, "Parado\r\n");	
+	
+		break;
+
+	case YENDO_A_PLANTA_BAJA:
+		uartWriteString(UART_USB, "Yendo a Planta Baja\r\n");	
+	
+		break;
+
+	case MODO_CONFIGURACION:
+		uartWriteString(UART_USB, "Modo Configuracion\r\n");
+		
+		break;
+
+	default:
+
+		break;
+ 	}      	
+	
+	
+uartWriteString(UART_USB, "estadoActualPuerta = ");	
+switch(estadoActualPuerta)
+	{
+	case PUERTA_CERRADA:
+		uartWriteString(UART_USB, "Puertas Cerradas\r\n");
+
+		break;
+
+	case ABRIENDO_PUERTA:
+		uartWriteString(UART_USB, "Abriendo Puertas\r\n");
+		
+		break;
+
+	case PUERTA_ABIERTA:
+		uartWriteString(UART_USB, "Puertas Abiertas\r\n");
+		
+		break;
+
+	case INTENTANDO_CERRAR_PUERTAS:
+		uartWriteString(UART_USB, "Intentado Cerrar Puertas\r\n");
+		
+		break;
+	
+	
+	case CERRANDO_PUERTA:
+		uartWriteString(UART_USB, "Cerrando Puertas\r\n");
+		
+		break;
+
+	case ALARMA_PUERTA_ABIERTA:
+		uartWriteString(UART_USB, "Alarma Puertas Abiertas\r\n");
+		
+		break;
+
+
+	default:
+
+		break;
+ 	}      
+
+uartWriteString(UART_USB, "\r\n");
+
+	
+	
+}
+//*********************************************************************************************************************
+//*********************************************************************************************************************
+
+
+
+
+
+//*********************************************************************************************************************
+//
+//*********************************************************************************************************************
+/**
+ * C++ version 0.4 char* style "itoa":
+ * Written by Lukás Chmela
+ * Released under GPLv3.
+
+ */
+char* itoa(int value, char* result, int base)
+{
+   // check that the base if valid
+   if (base < 2 || base > 36) { *result = '\0'; return result; }
+
+   char* ptr = result, *ptr1 = result, tmp_char;
+   int tmp_value;
+
+   do {
+      tmp_value = value;
+      value /= base;
+      *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+   } while ( value );
+
+   // Apply negative sign
+   if (tmp_value < 0) *ptr++ = '-';
+   *ptr-- = '\0';
+   while(ptr1 < ptr) {
+      tmp_char = *ptr;
+      *ptr--= *ptr1;
+      *ptr1++ = tmp_char;
+   }
+   return result;
+}
+//*********************************************************************************************************************
+//*********************************************************************************************************************
 
 
 
