@@ -17,7 +17,6 @@ extern uint32_t pasos;
 
 /*==================[definiciones de datos externos]=========================*/
 
-extern bool_t flagConfiguracion;
 
 uint16_t primerDigito  = 0; // Variable para almacenar el primer digito ingresado.
 uint16_t segundoDigito = 0; // Variable para almacenar el segundo digito ingresado.
@@ -30,7 +29,7 @@ uint32_t indiceTeclaGuardar = 0;    // Variable que me permite conocer que digit
 int almacenarPisos [10];    // Vector para almacenar hasta 10 pisos ingresados correctamente.
 int indice = 0;                  // Indice para recorrer el vector anterior.
 
-
+extern bool_t flagConfiguracion;
 
 /* Vector para almacenar los pines que van a estar conectados a las filas del teclado matricial. */
 uint8_t pinesFila[4] = {
@@ -295,10 +294,13 @@ indiceTeclaGuardar = 0;
 //*********************************************************************************************************************
 void cancelar (void){
     
-    int borrar = 0;
-    
-/* Ponemos un '0' en la ultima posicion almaceada*/
-    almacenarPisos [indice-1] = borrar;
+
+uint16_t primerDigito  = 0; 
+uint16_t segundoDigito = 0; 
+uint16_t confirmar = 0;     
+
+uint32_t indiceTeclaPresionada = 0; 
+uint32_t indiceTeclaGuardar = 0;
     
 }
 //*********************************************************************************************************************
