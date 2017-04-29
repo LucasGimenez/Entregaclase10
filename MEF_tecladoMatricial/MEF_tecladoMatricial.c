@@ -29,6 +29,8 @@ uint32_t indiceTeclaGuardar = 0;    // Variable que me permite conocer que digit
 int almacenarPisos [10];    // Vector para almacenar hasta 10 pisos ingresados correctamente.
 int indice = 0;                  // Indice para recorrer el vector anterior.
 
+extern bool_t flagConfiguracion;
+
 /* Vector para almacenar los pines que van a estar conectados a las filas del teclado matricial. */
 uint8_t pinesFila[4] = {
     RS232_TXD,
@@ -51,8 +53,6 @@ static uint16_t pinesTeclado[16] = {
                                 7, 8, 9, 'C',
                                 '*', 0, '#', 'D'
 };
-
-delay_t miDelay;
 
 
 /*==================[declaraciones de funciones internas]====================*/
@@ -212,18 +212,25 @@ bool_t ingresarDigito (void){
 //*********************************************************************************************************************
 //
 //*********************************************************************************************************************
-void guardarPisoSimple (int primerDigito)
-{
+void guardarPisoSimple (int primerDigito) {
 /*======= Funcion que almacena el piso ingresado, de un solo digito, en el vector =======*/
-if (indice < 10)
-	{
-	if (indice > 0)
+if (indice < 10) {
+
+	if (indice > 0) {
 		almacenarPisos[indice] = pinesTeclado[primerDigito];
-	else	almacenarPisos[0] = pinesTeclado[primerDigito];
+    }
+    
+	else	{
+        almacenarPisos[0] = pinesTeclado[primerDigito];
+    }
+    
 	indice ++;
-	}
+}
+    
+/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
 primerDigito  = 0;
 segundoDigito = 0;
+indiceTeclaGuardar = 0;
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -232,27 +239,49 @@ segundoDigito = 0;
 
 
 //*********************************************************************************************************************
-//
 //*********************************************************************************************************************
 void guardarPisoDoble (int primerDigito, int segundoDigito)
 {
-if (indice < 10)
-	{
-	/*======= Funcion que almacena el piso ingresado, de dos digitos, en el vector =======*/
+    
+
+if (indice < 10){
+/*======= Funcion que almacena el piso ingresado, de dos digitos, en el vector =======*/
 	int carga = 0;
-	/*======= Etapa de almacenar en la variable 'carga' el piso ingresado =======*/
-	if (pinesTeclado[segundoDigito] == 0)
-		carga = pinesTeclado[primerDigito] * 10;
-	else	carga = primerDigito + segundoDigito + 9;
-	/*======= Etapa de carga en el vector que almacena los pisos ingresados =======*/
-	if (indice > 0)
-		almacenarPisos[indice] = carga;
-	else	almacenarPisos[0] = carga;
-	indice++;
-	}
+    
+/*======= Etapa de guardar un subsuelo (numero negativo) en el vector de almacenamiento =======*/
+    if (pinesTeclado[primerDigito] == '#' && pinesTeclado[segundoDigito] <= 5) {
+        carga = segundoDigito - (2 * segundoDigito);
+        carga = almacenarPisos[indice]; 
+    }
+/*======= Etapa de almacenar en la variable 'carga' el piso ingresado =======*/
+	carga = (pinesTeclado[primerDigito] * 10) + pinesTeclado[segundoDigito];
+      
+/*======= Etapa para verificar si se desea entrar al modo configuracion =======*/
+    if (carga == 99) {
+    flagConfiguracion = TRUE;
+    }
+        
+/*======= Etapa de carga en el vector que almacena los pisos ingresados =======*/
+    if (carga <= 20){
+        
+        if (indice > 0){
+            almacenarPisos[indice] = carga;
+        }
+        
+        else {	
+            almacenarPisos[0] = carga;
+        }
+        
+        indice++;
+    }
+}
+    
+/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
+    
 primerDigito  = 0;
 segundoDigito = 0;
 indiceTeclaGuardar = 0;
+
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -267,7 +296,7 @@ void cancelar (void){
     
     int borrar = 0;
     
-/* Ponemos un '0' en la última posicion almaceada*/
+/* Ponemos un '0' en la ultima posicion almaceada*/
     almacenarPisos [indice-1] = borrar;
     
 }
