@@ -38,23 +38,65 @@
 
 /*==================[inlcusiones]============================================*/
 
-#include "programa.h"		// <= su propio archivo de cabecera
 #include "sapi.h"		// <= Biblioteca sAPI
+#include "Ascensor.h"		// <= su propio archivo de cabecera
 #include "driverDisplay.h"	// <= Biblioteca display 7 segmentos x 4 digitos
-#include "driverTeclado.h"	// <= Biblioteca teclado 4x4
-#include "mefAscensor.h"	// <= Biblioteca MEF ascensor
+#include "MEF_tecladoMatricial.h"	// <= Biblioteca teclado 4x4
+#include "MEFAscensorPuertas.h"	// <= Biblioteca MEF ascensor
 
 /*==================[definiciones y macros]==================================*/
+#define setbit32(var, bit)               ((var) |=  (uint32_t)((uint32_t)1<<(uint32_t)(bit)))
+#define clrbit32(var, bit)             ((var) &= ~(uint32_t)((uint32_t)1<<(uint32_t)(bit)))
+#define querybit32(var, bit)             ((bool_t)((var)>>(uint32_t)(bit)) & ((uint32_t)1))
+
+
 
 /*==================[definiciones de datos internos]=========================*/
 
 
+/*==================[definiciones de datos globales]=========================*/
+//SACAR ESTAS VARIABLES
+delay_t timSerial;
 
-/*==================[definiciones de datos externos]=========================*/
 
 /*==================[declaraciones de funciones internas]====================*/
 
+
+
+
+
+
+
+/*==================[declaraciones de datos externos]=========================*/
+
+extern int8_t pideNuevoPiso;
+extern int8_t pisoDestino;
+
 /*==================[declaraciones de funciones externas]====================*/
+extern void EstadoInterno(void);
+// extern void configurarTeclado(void);
+// extern void actualizarMEF_tecladoMatricial (void);
+extern void ConfigDisplay(void);
+extern void PonPisoActualDisplay(void);
+
+
+
+
+//*************************************************************************************************
+//			Interrupción cada 5ms
+//*************************************************************************************************
+bool_t IntTimer (void *ptr)
+{
+
+PonPisoActualDisplay();
+	
+
+return 1;
+}
+//*************************************************************************************************
+//*************************************************************************************************
+
+
 
 /*==================[funcion principal]======================================*/
 
@@ -65,26 +107,53 @@ int main( void ){
 // Inicializar y configurar la plataforma
 boardConfig();   
 
+// Interupcion cada 5ms.
+tickConfig (5, IntTimer);
 
-display7SegmentosConfigurarPines(); // Configuración de pines para el display 7 segmentos
+ConfigDisplay(); // Configuración de pines para el display 7 segmentos
 
 
-configurarTecladoMatricial(); // Configurar teclado matricial
+configurarTeclado(); // Configurar teclado matricial
 
+
+// Se inicializa la MEF que maneja el ascensor.
+InicializarMEFAsc();
+
+// Se inicializa la MEF que maneja la puerta del ascensor.
+InicializarMEFPuerta();
+
+
+
+// UART_USB a 115200 baudios.
+uartConfig( UART_USB, 115200 );
+delayConfig(&timSerial, 200);   
 
 
 // ---------- REPETIR POR SIEMPRE --------------------------
-while( TRUE )
+while(TRUE)
 {      
 
+// Función Actualizar MEF del Teclado.
+actualizarMEF_tecladoMatricial();
+
+// Función Actualizar MEF del Ascensor.
+ActualizarMEFAsc();
 
 
+// Función Actualizar MEF de las Puertas.
+ActualizaMEFPuerta();
 
 
-
-
-
-
+if (delayRead(&timSerial))
+	{
+	EstadoInterno();
+	
+	if (!gpioRead(TEC4))
+		{
+//		pideNuevoPiso = 1;
+//		pisoDestino = 5;
+		}
+	}
 
 
 
@@ -100,3 +169,21 @@ return 0;
 /*==================[definiciones de funciones externas]=====================*/
 
 /*==================[fin del archivo]========================================*/
+
+
+
+
+
+
+
+
+//*********************************************************************************************************************
+//
+//*********************************************************************************************************************
+// AL INGRESAR AL EL ESTADO SE EJECUTA POR UNICA VEZ:
+// SALIDA EN EL ESTADO:
+// CAMBIO DE ESTADO:
+
+
+//*********************************************************************************************************************
+//*********************************************************************************************************************

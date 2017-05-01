@@ -36,38 +36,51 @@
 
  *===========================================================================*/
 
-#ifndef _DRIVERTECLADO_H_
-#define _DRIVERTECLADO_H_
+#ifndef _MEFASCENSORPUERTAS_H_
+#define _MEFASCENSORPUERTAS_H_
 
 /*==================[inclusiones]============================================*/
 
-/*==================[c++]====================================================*/
 
 /*==================[macros]=================================================*/
 
-/*==================[tipos de datos declarados por el usuario]===============*/
-
-/*==================[declaraciones de datos externos]========================*/
-
-/*==================[declaraciones de funciones externas]====================*/
 
 
+/*==================[typedef]================================================*/
+// Nuevo tipo de datos enumerado llamado estadoMEF
+typedef enum{
+	EN_PLANTA_BAJA,		// 0
+	SUBIENDO,		// 1
+	BAJANDO,		// 2
+	PARADO,			// 3
+	YENDO_A_PLANTA_BAJA,	// 4
+	MODO_CONFIGURACION	// 5
+} estadoMEFASC_t;
 
-// Configurar el teclado matricial.
-void configurarTecladoMatricial( void );
-
-
-/* Devuelve TRUE si hay alguna tecla presionada o FALSE (0) en caso contrario.
- * Si hay tecla presionada guarda el valor en la variable key.
- * El valor es un numero de indice entre 0 y 15 */
-bool_t leerTecladoMatricial( void );
-
-
-
+typedef enum{
+	PUERTA_CERRADA,			// 0
+	ABRIENDO_PUERTA,		// 1
+	PUERTA_ABIERTA,			// 2
+	INTENTANDO_CERRAR_PUERTAS,	// 3
+	CERRANDO_PUERTA,		// 4
+	ALARMA_PUERTA_ABIERTA		// 5
+} estadoMEFAbreCierraPuerta_t;
 
 
 
-/*==================[c++]====================================================*/
+/*==================[external data declaration]==============================*/
+
+
+
+/*==================[external functions declaration]=========================*/
+
+void InicializarMEFAsc(void);
+void ActualizarMEFAsc(void);
+void InicializarMEFPuerta(void);
+void ActualizaMEFPuerta(void);
+
+
+
 
 /*==================[end of file]============================================*/
-#endif /* _DRIVERTECLADO_H_ */
+#endif /* _MEFASCENSORPUERTAS_H_ */

@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo L贸pez Aldana.
+ * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo L髉ez Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -35,38 +35,17 @@
  * Date: 2017/04/10
 
  *===========================================================================*/
-
+ 
 /*==================[inlcusiones]============================================*/
 
-#include "programa.h"		// <= su propio archivo de cabecera
 #include "sapi.h"		// <= Biblioteca sAPI
-#include "driverDisplay.h"	// <= Biblioteca display 7 segmentos x 4 digitos
-#include "driverTeclado.h"	// <= Biblioteca teclado 4x4
-#include "mefAscensor.h"	// <= Biblioteca MEF ascensor
+#include "MEFAscensorPuertas.h"	// <= Biblioteca MEF ascensor
+
 
 /*==================[definiciones y macros]==================================*/
 #define setbit32(var, bit)               ((var) |=  (uint32_t)((uint32_t)1<<(uint32_t)(bit)))
 #define clrbit32(var, bit)             ((var) &= ~(uint32_t)((uint32_t)1<<(uint32_t)(bit)))
 #define querybit32(var, bit)             ((bool_t)((var)>>(uint32_t)(bit)) & ((uint32_t)1))
-
-// Nuevo tipo de datos enumerado llamado estadoMEF
-typedef enum{
-	EN_PLANTA_BAJA,		// 0
-	SUBIENDO,		// 1
-	BAJANDO,		// 2
-	PARADO,			// 3
-	YENDO_A_PLANTA_BAJA,	// 4
-	MODO_CONFIGURACION	// 5
-} estadoMEFASC_t;
-
-typedef enum{
-	PUERTA_CERRADA,			// 0
-	ABRIENDO_PUERTA,		// 1
-	PUERTA_ABIERTA,			// 2
-	INTENTANDO_CERRAR_PUERTAS,	// 3
-	CERRANDO_PUERTA,		// 4
-	ALARMA_PUERTA_ABIERTA		// 5
-} estadoMEFAbreCierraPuerta_t;
 
 
 #define LED_ASCMOVIENDO		LEDB	// Indica ascensor moviendose.
@@ -98,7 +77,7 @@ typedef enum{
 //SACAR ESTAS VARIABLES
 int8_t pideNuevoPiso = 0;
 int8_t pideConfiguracion = 0;
-uint8_t numeroEnString[10];
+
 
 
 
@@ -115,7 +94,7 @@ int8_t pisoActual = 0;
 int8_t pisoDestino = 0;
 
 // Velocidad del ascensor 1000 = 1seg. Puede cambiar por Configuracion externa
-uint16_t velPisoPiso = 5000;
+uint16_t velPisoPiso = 2000;
 
 // Velocidad de apertura y cierre de puerta 1000 = 1s.Puede cambiar por Configuracion externa
 uint16_t velAbreCierraPuerta = 2000;
@@ -161,7 +140,13 @@ delay_t timRetornoPB;
 
 
 
-delay_t timSerial;
+
+/*==================[declaraciones de datos externos]=========================*/
+extern int almacenarPisos [10];		// Vector para almacenar hasta 10 pisos ingresados correctamente.
+extern int indice;				// Indice para recorrer el vector anterior.
+
+
+
 
 
 /*==================[declaraciones de funciones internas]====================*/
@@ -173,87 +158,14 @@ void ActualizarMEFAsc(void);
 void InicializarMEFPuerta(void);
 void ActualizaMEFPuerta(void);
 
-void EstadoInterno(void);
-char* itoa(int value, char* result, int base);
 
 
 
 
-
-
-/*==================[funcion principal]======================================*/
-
-// FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE ENCENDIDO O RESET.
-int main( void ){
-
-// ---------- CONFIGURACIONES ------------------------------
-// Inicializar y configurar la plataforma
-boardConfig();   
-
-
-display7SegmentosConfigurarPines(); // Configuraci贸n de pines para el display 7 segmentos
-
-
-configurarTecladoMatricial(); // Configurar teclado matricial
-
-
-// Se inicializa la MEF que maneja el ascensor.
-InicializarMEFAsc();
-
-// Se inicializa la MEF que maneja la puerta del ascensor.
-InicializarMEFPuerta();
-
-
-
-// UART_USB a 115200 baudios.
-uartConfig( UART_USB, 115200 );
-delayConfig(&timSerial, 200);   
-
-
-// ---------- REPETIR POR SIEMPRE --------------------------
-while(TRUE)
-{      
-
-
-
-
-// Funci贸n Actualizar MEF del Ascensor.
-ActualizarMEFAsc();
-
-
-// Funci贸n Actualizar MEF de las Puertas.
-ActualizaMEFPuerta();
-
-
-if (delayRead(&timSerial))
-	{
-	EstadoInterno();
-	
-	if (!gpioRead(TEC4))
-		{
-		pideNuevoPiso = 1;
-		pisoDestino = 5;
-		}
-	}
-
-
-
-
-} 
-
-
-return 0;
-}
-
-/*==================[definiciones de funciones internas]=====================*/
-
-/*==================[definiciones de funciones externas]=====================*/
-
-/*==================[fin del archivo]========================================*/
 
 
 //*********************************************************************************************************************
-//		Funci贸n inicializar MEF del ascensor
+//		Funci髇 inicializar MEF del ascensor
 //*********************************************************************************************************************
 void InicializarMEFAsc(void)
 {
@@ -282,7 +194,7 @@ Clr_AscParadoFlag;
 
 
 //*********************************************************************************************************************
-//		Funci贸n inicializar MEF de la puerta del ascensor
+//		Funci髇 inicializar MEF de la puerta del ascensor
 //*********************************************************************************************************************
 void InicializarMEFPuerta(void)
 {
@@ -308,13 +220,41 @@ delayConfig(&timRetornoPB, TRETORNOPB);
 
 
 
+//*********************************************************************************************************************
+//		Funci髇 que obtiene un nuevo piso
+//*********************************************************************************************************************
+void CargaUnNuevoPiso(void)
+{
+uint8_t i ;
+
+pisoDestino = almacenarPisos[0];
+indice--;
+
+for ( i = 10; i > 1; i--)
+	almacenarPisos [i-1] = almacenarPisos [i];
+
+	
+almacenarPisos [10] = 0;
+
+pideNuevoPiso = 1;
+
+}
+//*********************************************************************************************************************
+//*********************************************************************************************************************
+
+
+
 
 
 //*********************************************************************************************************************
-//		Funci贸n Actualizar MEF del Ascensor
+//		Funci髇 Actualizar MEF del Ascensor
 //*********************************************************************************************************************
 void ActualizarMEFAsc(void)
 {
+
+if (indice)
+	CargaUnNuevoPiso();
+
 switch(estadoActualAsc)
 	{
 	case EN_PLANTA_BAJA:
@@ -330,6 +270,7 @@ switch(estadoActualAsc)
 		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando;
 		// VER!!! si es el mismo  piso; tambien se tendria que fijar piso destino.
 		if (pideNuevoPiso)//COMPLETAR!!!
+//		if (pisoActual != pisoDestino)
 			{
 			if (estadoActualPuerta == PUERTA_ABIERTA)
 				Set_CierraPuertasFlag;			// Pide cerrar puertas.
@@ -465,6 +406,7 @@ switch(estadoActualAsc)
 		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando;
 		// VER!!! si es el mismo  piso; tambien se tendria que fijar piso destino.
 		if (pideNuevoPiso)//COMPLETAR!!!
+//		if (pisoActual != pisoDestino)
 			{
 			if (pisoActual < pisoDestino)
 				{
@@ -538,7 +480,7 @@ switch(estadoActualAsc)
 
 
 //*********************************************************************************************************************
-//		Funci贸n Actualizar MEF de la puerta del ascensor
+//		Funci髇 Actualizar MEF de la puerta del ascensor
 //*********************************************************************************************************************
 void ActualizaMEFPuerta(void)
 {
@@ -628,152 +570,6 @@ switch(estadoActualPuerta)
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
-
-
-
-
-
-
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-void EstadoInterno(void)
-{
-
-
-uartWriteString(UART_USB, "Piso Actual = ");
-itoa( pisoActual, numeroEnString, 10);         
-uartWriteString( UART_USB, numeroEnString );  
-uartWriteString( UART_USB, "\r\n" );  
-	
-
-uartWriteString(UART_USB, "estadoActualAsc = ");
-switch(estadoActualAsc)
-	{
-	case EN_PLANTA_BAJA:
-		uartWriteString(UART_USB, "En Planta Baja\r\n");
-	
-		break;
-			
-	case SUBIENDO:
-		uartWriteString(UART_USB, "Subiendo\r\n");
-	
-		break;
-
-	case BAJANDO:
-		uartWriteString(UART_USB, "Bajando\r\n");	
-	
-		break;
-
-	case PARADO:
-		uartWriteString(UART_USB, "Parado\r\n");	
-	
-		break;
-
-	case YENDO_A_PLANTA_BAJA:
-		uartWriteString(UART_USB, "Yendo a Planta Baja\r\n");	
-	
-		break;
-
-	case MODO_CONFIGURACION:
-		uartWriteString(UART_USB, "Modo Configuracion\r\n");
-		
-		break;
-
-	default:
-
-		break;
- 	}      	
-	
-	
-uartWriteString(UART_USB, "estadoActualPuerta = ");	
-switch(estadoActualPuerta)
-	{
-	case PUERTA_CERRADA:
-		uartWriteString(UART_USB, "Puertas Cerradas\r\n");
-
-		break;
-
-	case ABRIENDO_PUERTA:
-		uartWriteString(UART_USB, "Abriendo Puertas\r\n");
-		
-		break;
-
-	case PUERTA_ABIERTA:
-		uartWriteString(UART_USB, "Puertas Abiertas\r\n");
-		
-		break;
-
-	case INTENTANDO_CERRAR_PUERTAS:
-		uartWriteString(UART_USB, "Intentado Cerrar Puertas\r\n");
-		
-		break;
-	
-	
-	case CERRANDO_PUERTA:
-		uartWriteString(UART_USB, "Cerrando Puertas\r\n");
-		
-		break;
-
-	case ALARMA_PUERTA_ABIERTA:
-		uartWriteString(UART_USB, "Alarma Puertas Abiertas\r\n");
-		
-		break;
-
-
-	default:
-
-		break;
- 	}      
-
-uartWriteString(UART_USB, "\r\n");
-
-	
-	
-}
-//*********************************************************************************************************************
-//*********************************************************************************************************************
-
-
-
-
-
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-/**
- * C++ version 0.4 char* style "itoa":
- * Written by Luk谩s Chmela
- * Released under GPLv3.
-
- */
-char* itoa(int value, char* result, int base)
-{
-   // check that the base if valid
-   if (base < 2 || base > 36) { *result = '\0'; return result; }
-
-   char* ptr = result, *ptr1 = result, tmp_char;
-   int tmp_value;
-
-   do {
-      tmp_value = value;
-      value /= base;
-      *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-   } while ( value );
-
-   // Apply negative sign
-   if (tmp_value < 0) *ptr++ = '-';
-   *ptr-- = '\0';
-   while(ptr1 < ptr) {
-      tmp_char = *ptr;
-      *ptr--= *ptr1;
-      *ptr1++ = tmp_char;
-   }
-   return result;
-}
-//*********************************************************************************************************************
-//*********************************************************************************************************************
-
 
 
 

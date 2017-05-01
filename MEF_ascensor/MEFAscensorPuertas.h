@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo LÃ³pez Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -35,28 +35,52 @@
  * Date: 2017/04/10
 
  *===========================================================================*/
- 
-/*==================[inlcusiones]============================================*/
 
-#include "sapi.h"		// <= Biblioteca sAPI
-#include "mefAscensor.h"	// <= Biblioteca MEF ascensor
+#ifndef _MEFASCENSORPUERTAS_H_
+#define _MEFASCENSORPUERTAS_H_
 
-/*==================[definiciones y macros]==================================*/
+/*==================[inclusiones]============================================*/
 
-/*==================[definiciones de datos internos]=========================*/
 
-/*==================[definiciones de datos externos]=========================*/
-
-/*==================[declaraciones de funciones internas]====================*/
-
-/*==================[declaraciones de funciones externas]====================*/
-
-/*==================[definiciones de funciones internas]=====================*/
-
-/*==================[definiciones de funciones externas]=====================*/
+/*==================[macros]=================================================*/
 
 
 
+/*==================[typedef]================================================*/
+// Nuevo tipo de datos enumerado llamado estadoMEF
+typedef enum{
+	EN_PLANTA_BAJA,		// 0
+	SUBIENDO,		// 1
+	BAJANDO,		// 2
+	PARADO,			// 3
+	YENDO_A_PLANTA_BAJA,	// 4
+	MODO_CONFIGURACION	// 5
+} estadoMEFASC_t;
+
+typedef enum{
+	PUERTA_CERRADA,			// 0
+	ABRIENDO_PUERTA,		// 1
+	PUERTA_ABIERTA,			// 2
+	INTENTANDO_CERRAR_PUERTAS,	// 3
+	CERRANDO_PUERTA,		// 4
+	ALARMA_PUERTA_ABIERTA		// 5
+} estadoMEFAbreCierraPuerta_t;
 
 
-/*==================[fin del archivo]========================================*/
+
+/*==================[external data declaration]==============================*/
+
+
+
+/*==================[external functions declaration]=========================*/
+
+void InicializarMEFAsc(void);
+void ActualizarMEFAsc(void);
+void InicializarMEFPuerta(void);
+void ActualizaMEFPuerta(void);
+
+
+
+
+/*==================[end of file]============================================*/
+#endif /* _MEFASCENSORPUERTAS_H_ */
