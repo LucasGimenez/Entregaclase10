@@ -66,7 +66,6 @@
 
 
 
-
 /*==================[definiciones de datos internos]=========================*/
 
 
@@ -223,21 +222,24 @@ delayConfig(&timRetornoPB, TRETORNOPB);
 //*********************************************************************************************************************
 //		Función que obtiene un nuevo piso
 //*********************************************************************************************************************
-void CargaUnNuevoPiso(void)
+void CargaNuevoPiso(void)
 {
 uint8_t i ;
 
-pisoDestino = almacenarPisos[0];
-indice--;
-
-for ( i = 10; i > 1; i--)
-	almacenarPisos [i-1] = almacenarPisos [i];
-
-	
-almacenarPisos [10] = 0;
-
-pideNuevoPiso = 1;
-
+// Si indice es distinto de cero significa que hay algun piso cargado en el buffer.
+if (indice)
+	{
+	// Si el piso actual es distinto del piso destino, se lo fija como nuevo, si no solo se desplaza el buffer.
+	if (pisoActual != almacenarPisos[0])
+		{
+		pisoDestino = almacenarPisos[0];
+		pideNuevoPiso = 1;
+		}
+	indice--;
+	for (i=0; i<9; i++)
+		almacenarPisos[i] = almacenarPisos[i+1];
+	almacenarPisos[9] = 0;
+	}
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -252,8 +254,8 @@ pideNuevoPiso = 1;
 void ActualizarMEFAsc(void)
 {
 
-if (indice)
-	CargaUnNuevoPiso();
+
+	
 
 switch(estadoActualAsc)
 	{
@@ -265,12 +267,9 @@ switch(estadoActualAsc)
 			Set_AbrePuertasFlag;
 			}
 
+		CargaNuevoPiso();
 		
-		// CAMBIO DE ESTADO:
-		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando;
-		// VER!!! si es el mismo  piso; tambien se tendria que fijar piso destino.
-		if (pideNuevoPiso)//COMPLETAR!!!
-//		if (pisoActual != pisoDestino)
+		if (pideNuevoPiso)
 			{
 			if (estadoActualPuerta == PUERTA_ABIERTA)
 				Set_CierraPuertasFlag;			// Pide cerrar puertas.
@@ -366,9 +365,10 @@ switch(estadoActualAsc)
 			
 		else if (estadoActualPuerta == PUERTA_CERRADA)
 			{
-			// CAMBIO DE ESTADO:
-			// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando.
-			if (0)//COMPLETAR!!!
+			
+			CargaNuevoPiso();
+			
+			if (pideNuevoPiso)
 				{
 				Clr_AscParadoFlag;
 				if (pisoActual < pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
@@ -402,11 +402,9 @@ switch(estadoActualAsc)
 		break;
 
 	case YENDO_A_PLANTA_BAJA:
-		// CAMBIO DE ESTADO:
-		// Se consulta si hay nuevo piso, si hay se pasa al estado subiendo o bajando;
-		// VER!!! si es el mismo  piso; tambien se tendria que fijar piso destino.
-		if (pideNuevoPiso)//COMPLETAR!!!
-//		if (pisoActual != pisoDestino)
+		CargaNuevoPiso();
+			
+		if (pideNuevoPiso)	
 			{
 			if (pisoActual < pisoDestino)
 				{
@@ -570,7 +568,6 @@ switch(estadoActualPuerta)
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
-
 
 
 
