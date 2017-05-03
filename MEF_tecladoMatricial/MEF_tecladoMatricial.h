@@ -10,7 +10,7 @@
 /*==================[inclusiones]============================================*/
 
 
-void inicializarMEF_tecladoMatrical(void)
+void inicializarMEF_tecladoMatrical(void);
 void actualizarMEF_tecladoMatricial (void);
 
 void cancelar (void);
