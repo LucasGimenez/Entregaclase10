@@ -229,77 +229,70 @@ bool_t ingresarDigito (void){
 }
 
 void guardarPisoSimple (int primerDigito) {
-/*======= Funcion que almacena el piso ingresado, de un solo digito, en el vector =======*/
-if (indice < 10) {
+	/*======= Funcion que almacena el piso ingresado, de un solo digito, en el vector =======*/
+	if (indice < 10) {
 
-	if (indice > 0) {
-		almacenarPisos[indice] = pinesTeclado[primerDigito];
-    }
-    
-	else	{
-        almacenarPisos[0] = pinesTeclado[primerDigito];
-    }
-    
-	indice ++;
-}
-    
-/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
-primerDigito  = 0;
-segundoDigito = 0;
-indiceTeclaGuardar = 0;void actualizarMEF_tecladoMatricial (void);
+		if (indice > 0)
+			almacenarPisos[indice] = pinesTeclado[primerDigito];
+		else
+			almacenarPisos[0] = pinesTeclado[primerDigito];
+
+		indice ++;
+	}
+
+	/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
+	primerDigito  = 0;
+	segundoDigito = 0;
+	indiceTeclaGuardar = 0;void actualizarMEF_tecladoMatricial (void);
 }
 
 void guardarPisoDoble (int primerDigito, int segundoDigito) {
 	
-/*======= Funcion que almacena el piso ingresado, de dos digitos, en el vector =======*/
+	/*======= Funcion que almacena el piso ingresado, de dos digitos, en el vector =======*/
 	
-int carga = 0;
+	int carga = 0;
 	
-if (indice < 10){
-/*======= Etapa de guardar un subsuelo (numero negativo) en el vector de almacenamiento =======*/
-    if (pinesTeclado[primerDigito] == '#' && pinesTeclado[segundoDigito] <= 5) {
-        carga = segundoDigito - (2 * segundoDigito);
-        carga = almacenarPisos[indice]; 
-    }
-/*======= Etapa de almacenar en la variable 'carga' el piso ingresado =======*/
-	carga = (pinesTeclado[primerDigito] * 10) + pinesTeclado[segundoDigito];
-      
-/*======= Etapa para verificar si se desea entrar al modo configuracion =======*/
+	/*======= Etapa de guardar un subsuelo (numero negativo) en el vector de almacenamiento =======*/
+	if (pinesTeclado[primerDigito] == '#' && pinesTeclado[segundoDigito] <= 5)
+		carga = 0 - pinesTeclado[segundoDigito];
+	else 
+		carga = (pinesTeclado[primerDigito] * 10) + pinesTeclado[segundoDigito];
+	
+	/*======= Etapa para verificar si se desea entrar al modo configuracion =======*/
     if (carga == 99) {
     flagConfiguracion = TRUE;
     }
-        
-/*======= Etapa de carga en el vector que almacena los pisos ingresados =======*/
-    if (carga <= 20){
-        
-        if (indice > 0){
-            almacenarPisos[indice] = carga;
-        }
-        
-        else {	
-            almacenarPisos[0] = carga;
-        }
-        
-        indice++;
-    }
-}
+	
+	/*======= Etapa de carga en el vector que almacena los pisos ingresados =======*/	
+	if (indice < 10){
+
+		if (carga <= 20){
+
+			if (indice > 0)
+				almacenarPisos[indice] = carga;
+			else 
+				almacenarPisos[0] = carga;
+
+			indice++;
+		}
+	}
     
-/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
-primerDigito  = 0xFF;
-segundoDigito = 0xFF;
-indiceTeclaGuardar = 0;
+	/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
+	primerDigito  = 0xFF;
+	segundoDigito = 0xFF;
+	indiceTeclaGuardar = 0;
 
 }
 
 void cancelar (void) {
     
+/*======= Para cancelar la operacion le seteamos un valor no valido a las siguientes variables =======*/
+	uint16_t primerDigito  = 0xFF; 
+	uint16_t segundoDigito = 0xFF; 
+	uint16_t confirmar = 0xFF;     
 
-uint16_t primerDigito  = 0xFF; 
-uint16_t segundoDigito = 0xFF; 
-uint16_t confirmar = 0xFF;     
-
-uint32_t indiceTeclaPresionada = 0; 
-uint32_t indiceTeclaGuardar = 0;
+	uint32_t indiceTeclaPresionada = 0; 
+	uint32_t indiceTeclaGuardar = 0;
     
 }
 
