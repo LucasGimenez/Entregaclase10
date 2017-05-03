@@ -113,9 +113,11 @@ Discarded input sections
  .group         0x00000000        0x8 out/app/src/Ascensor.o
  .group         0x00000000        0x8 out/app/src/Ascensor.o
  .group         0x00000000        0x8 out/app/src/Ascensor.o
+ .group         0x00000000        0x8 out/app/src/Ascensor.o
  .text          0x00000000        0x0 out/app/src/Ascensor.o
  .data          0x00000000        0x0 out/app/src/Ascensor.o
  .bss           0x00000000        0x0 out/app/src/Ascensor.o
+ .group         0x00000000        0x8 out/app/src/MEFAscensorPuertas.o
  .group         0x00000000        0x8 out/app/src/MEFAscensorPuertas.o
  .group         0x00000000        0x8 out/app/src/MEFAscensorPuertas.o
  .group         0x00000000        0x8 out/app/src/MEFAscensorPuertas.o
@@ -287,6 +289,7 @@ Discarded input sections
  .debug_macro   0x00000000       0x3a out/app/src/MEFAscensorPuertas.o
  .debug_macro   0x00000000       0x10 out/app/src/MEFAscensorPuertas.o
  .debug_macro   0x00000000       0x70 out/app/src/MEFAscensorPuertas.o
+ .debug_macro   0x00000000       0x76 out/app/src/MEFAscensorPuertas.o
  .group         0x00000000        0x8 out/app/src/MEF_tecladoMatricial.o
  .group         0x00000000        0x8 out/app/src/MEF_tecladoMatricial.o
  .group         0x00000000        0x8 out/app/src/MEF_tecladoMatricial.o
@@ -537,9 +540,11 @@ Discarded input sections
  .group         0x00000000        0x8 out/app/src/Test.o
  .group         0x00000000        0x8 out/app/src/Test.o
  .group         0x00000000        0x8 out/app/src/Test.o
+ .group         0x00000000        0x8 out/app/src/Test.o
  .text          0x00000000        0x0 out/app/src/Test.o
  .data          0x00000000        0x0 out/app/src/Test.o
  .bss           0x00000000        0x0 out/app/src/Test.o
+ .bss.pasos     0x00000000        0x4 out/app/src/Test.o
  .debug_macro   0x00000000      0x8b0 out/app/src/Test.o
  .debug_macro   0x00000000       0x22 out/app/src/Test.o
  .debug_macro   0x00000000       0x87 out/app/src/Test.o
@@ -622,6 +627,7 @@ Discarded input sections
  .debug_macro   0x00000000       0x3a out/app/src/Test.o
  .debug_macro   0x00000000       0x10 out/app/src/Test.o
  .debug_macro   0x00000000       0x70 out/app/src/Test.o
+ .debug_macro   0x00000000       0x76 out/app/src/Test.o
  .group         0x00000000        0x8 out/app/src/driverDisplay.o
  .group         0x00000000        0x8 out/app/src/driverDisplay.o
  .group         0x00000000        0x8 out/app/src/driverDisplay.o
@@ -10269,7 +10275,7 @@ END GROUP
  *(.rodata.$Flash2*)
  *(.rodata.$MFlashB512*)
 
-.text           0x1a000000     0x2860
+.text           0x1a000000     0x28dc
  FILL mask 0xff
                 0x1a000000                __vectors_start__ = ABSOLUTE (.)
  *(.isr_vector)
@@ -10278,19 +10284,19 @@ END GROUP
                 0x1a000114                . = ALIGN (0x4)
                 0x1a000114                __section_table_start = .
                 0x1a000114                __data_section_table = .
-                0x1a000114        0x4 LONG 0x1a002868 LOADADDR (.data)
+                0x1a000114        0x4 LONG 0x1a0028e4 LOADADDR (.data)
                 0x1a000118        0x4 LONG 0x10000000 ADDR (.data)
                 0x1a00011c        0x4 LONG 0x68 SIZEOF (.data)
-                0x1a000120        0x4 LONG 0x1a002868 LOADADDR (.data_RAM2)
+                0x1a000120        0x4 LONG 0x1a0028e4 LOADADDR (.data_RAM2)
                 0x1a000124        0x4 LONG 0x10080000 ADDR (.data_RAM2)
                 0x1a000128        0x4 LONG 0x0 SIZEOF (.data_RAM2)
-                0x1a00012c        0x4 LONG 0x1a002868 LOADADDR (.data_RAM3)
+                0x1a00012c        0x4 LONG 0x1a0028e4 LOADADDR (.data_RAM3)
                 0x1a000130        0x4 LONG 0x20000000 ADDR (.data_RAM3)
                 0x1a000134        0x4 LONG 0x0 SIZEOF (.data_RAM3)
-                0x1a000138        0x4 LONG 0x1a002868 LOADADDR (.data_RAM4)
+                0x1a000138        0x4 LONG 0x1a0028e4 LOADADDR (.data_RAM4)
                 0x1a00013c        0x4 LONG 0x20008000 ADDR (.data_RAM4)
                 0x1a000140        0x4 LONG 0x0 SIZEOF (.data_RAM4)
-                0x1a000144        0x4 LONG 0x1a002868 LOADADDR (.data_RAM5)
+                0x1a000144        0x4 LONG 0x1a0028e4 LOADADDR (.data_RAM5)
                 0x1a000148        0x4 LONG 0x2000c000 ADDR (.data_RAM5)
                 0x1a00014c        0x4 LONG 0x0 SIZEOF (.data_RAM5)
                 0x1a000150                __data_section_table_end = .
@@ -10380,305 +10386,305 @@ END GROUP
                 0x1a000300        0xa out/app/src/Ascensor.o
                 0x1a000300                IntTimer
  *fill*         0x1a00030a        0x2 ff
- .text.main     0x1a00030c       0x60 out/app/src/Ascensor.o
+ .text.main     0x1a00030c       0x98 out/app/src/Ascensor.o
                 0x1a00030c                main
  .text.InicializarMEFAsc
-                0x1a00036c       0x38 out/app/src/MEFAscensorPuertas.o
-                0x1a00036c                InicializarMEFAsc
+                0x1a0003a4       0x38 out/app/src/MEFAscensorPuertas.o
+                0x1a0003a4                InicializarMEFAsc
  .text.InicializarMEFPuerta
-                0x1a0003a4       0x54 out/app/src/MEFAscensorPuertas.o
-                0x1a0003a4                InicializarMEFPuerta
- .text.CargaUnNuevoPiso
-                0x1a0003f8       0x44 out/app/src/MEFAscensorPuertas.o
-                0x1a0003f8                CargaUnNuevoPiso
+                0x1a0003dc       0x54 out/app/src/MEFAscensorPuertas.o
+                0x1a0003dc                InicializarMEFPuerta
+ .text.CargaNuevoPiso
+                0x1a000430       0x64 out/app/src/MEFAscensorPuertas.o
+                0x1a000430                CargaNuevoPiso
  .text.ActualizarMEFAsc
-                0x1a00043c      0x2a0 out/app/src/MEFAscensorPuertas.o
-                0x1a00043c                ActualizarMEFAsc
+                0x1a000494      0x318 out/app/src/MEFAscensorPuertas.o
+                0x1a000494                ActualizarMEFAsc
  .text.ActualizaMEFPuerta
-                0x1a0006dc      0x114 out/app/src/MEFAscensorPuertas.o
-                0x1a0006dc                ActualizaMEFPuerta
+                0x1a0007ac      0x114 out/app/src/MEFAscensorPuertas.o
+                0x1a0007ac                ActualizaMEFPuerta
  .text.configurarTeclado
-                0x1a0007f0       0x38 out/app/src/MEF_tecladoMatricial.o
-                0x1a0007f0                configurarTeclado
+                0x1a0008c0       0x38 out/app/src/MEF_tecladoMatricial.o
+                0x1a0008c0                configurarTeclado
  .text.ingresarDigito
-                0x1a000828      0x118 out/app/src/MEF_tecladoMatricial.o
-                0x1a000828                ingresarDigito
+                0x1a0008f8      0x118 out/app/src/MEF_tecladoMatricial.o
+                0x1a0008f8                ingresarDigito
  .text.guardarPisoSimple
-                0x1a000940       0x44 out/app/src/MEF_tecladoMatricial.o
-                0x1a000940                guardarPisoSimple
+                0x1a000a10       0x44 out/app/src/MEF_tecladoMatricial.o
+                0x1a000a10                guardarPisoSimple
  .text.guardarPisoDoble
-                0x1a000984       0x58 out/app/src/MEF_tecladoMatricial.o
-                0x1a000984                guardarPisoDoble
+                0x1a000a54       0x58 out/app/src/MEF_tecladoMatricial.o
+                0x1a000a54                guardarPisoDoble
  .text.cancelar
-                0x1a0009dc       0x18 out/app/src/MEF_tecladoMatricial.o
-                0x1a0009dc                cancelar
+                0x1a000aac       0x18 out/app/src/MEF_tecladoMatricial.o
+                0x1a000aac                cancelar
  .text.actualizarMEF_tecladoMatricial
-                0x1a0009f4       0x88 out/app/src/MEF_tecladoMatricial.o
-                0x1a0009f4                actualizarMEF_tecladoMatricial
- .text.itoa     0x1a000a7c       0x68 out/app/src/Test.o
-                0x1a000a7c                itoa
+                0x1a000ac4       0x88 out/app/src/MEF_tecladoMatricial.o
+                0x1a000ac4                actualizarMEF_tecladoMatricial
+ .text.itoa     0x1a000b4c       0x68 out/app/src/Test.o
+                0x1a000b4c                itoa
  .text.uartWriteMiDato
-                0x1a000ae4       0x34 out/app/src/Test.o
-                0x1a000ae4                uartWriteMiDato
+                0x1a000bb4       0x34 out/app/src/Test.o
+                0x1a000bb4                uartWriteMiDato
  .text.EstadoInterno
-                0x1a000b18      0x21c out/app/src/Test.o
-                0x1a000b18                EstadoInterno
+                0x1a000be8      0x200 out/app/src/Test.o
+                0x1a000be8                EstadoInterno
  .text.ConfigDisplay
-                0x1a000d34       0x48 out/app/src/driverDisplay.o
-                0x1a000d34                ConfigDisplay
+                0x1a000de8       0x48 out/app/src/driverDisplay.o
+                0x1a000de8                ConfigDisplay
  .text.SacaDigito
-                0x1a000d7c       0x58 out/app/src/driverDisplay.o
-                0x1a000d7c                SacaDigito
+                0x1a000e30       0x58 out/app/src/driverDisplay.o
+                0x1a000e30                SacaDigito
  .text.ConvierteByte
-                0x1a000dd4       0x40 out/app/src/driverDisplay.o
-                0x1a000dd4                ConvierteByte
+                0x1a000e88       0x40 out/app/src/driverDisplay.o
+                0x1a000e88                ConvierteByte
  .text.PonPisoActualDisplay
-                0x1a000e14       0x9c out/app/src/driverDisplay.o
-                0x1a000e14                PonPisoActualDisplay
+                0x1a000ec8       0x9c out/app/src/driverDisplay.o
+                0x1a000ec8                PonPisoActualDisplay
  .text.SystemCoreClockUpdate
-                0x1a000eb0       0x14 out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
-                0x1a000eb0                SystemCoreClockUpdate
+                0x1a000f64       0x14 out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
+                0x1a000f64                SystemCoreClockUpdate
  .text.pll_calc_divs
-                0x1a000ec4       0xa0 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a000f78       0xa0 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
  .text.pll_get_frac
-                0x1a000f64      0x100 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a001018      0x100 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
  .text.Chip_Clock_FindBaseClock
-                0x1a001064       0x4c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a001118       0x4c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
  .text.Chip_Clock_EnableCrystal
-                0x1a0010b0       0x4c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a0010b0                Chip_Clock_EnableCrystal
+                0x1a001164       0x4c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a001164                Chip_Clock_EnableCrystal
  .text.Chip_Clock_GetDividerSource
-                0x1a0010fc       0x1c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a0010fc                Chip_Clock_GetDividerSource
+                0x1a0011b0       0x1c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a0011b0                Chip_Clock_GetDividerSource
  .text.Chip_Clock_GetDividerDivisor
-                0x1a001118       0x1c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a001118                Chip_Clock_GetDividerDivisor
+                0x1a0011cc       0x1c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a0011cc                Chip_Clock_GetDividerDivisor
  .text.Chip_Clock_GetClockInputHz
-                0x1a001134       0xb8 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a001134                Chip_Clock_GetClockInputHz
+                0x1a0011e8       0xb8 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a0011e8                Chip_Clock_GetClockInputHz
  .text.Chip_Clock_CalcMainPLLValue
-                0x1a0011ec       0x80 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a0011ec                Chip_Clock_CalcMainPLLValue
+                0x1a0012a0       0x80 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a0012a0                Chip_Clock_CalcMainPLLValue
  .text.Chip_Clock_GetMainPLLHz
-                0x1a00126c       0x6c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a00126c                Chip_Clock_GetMainPLLHz
+                0x1a001320       0x6c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a001320                Chip_Clock_GetMainPLLHz
  .text.Chip_Clock_GetDivRate
-                0x1a0012d8       0x22 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
- *fill*         0x1a0012fa        0x2 ff
+                0x1a00138c       0x22 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+ *fill*         0x1a0013ae        0x2 ff
  .text.Chip_Clock_SetBaseClock
-                0x1a0012fc       0x58 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a0012fc                Chip_Clock_SetBaseClock
+                0x1a0013b0       0x58 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a0013b0                Chip_Clock_SetBaseClock
  .text.Chip_Clock_GetBaseClock
-                0x1a001354       0x26 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a001354                Chip_Clock_GetBaseClock
+                0x1a001408       0x26 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a001408                Chip_Clock_GetBaseClock
  .text.Chip_Clock_GetBaseClocktHz
-                0x1a00137a        0xc out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a00137a                Chip_Clock_GetBaseClocktHz
- *fill*         0x1a001386        0x2 ff
+                0x1a00142e        0xc out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a00142e                Chip_Clock_GetBaseClocktHz
+ *fill*         0x1a00143a        0x2 ff
  .text.Chip_Clock_EnableOpts
-                0x1a001388       0x3c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a001388                Chip_Clock_EnableOpts
+                0x1a00143c       0x3c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a00143c                Chip_Clock_EnableOpts
  .text.Chip_Clock_GetRate
-                0x1a0013c4       0x4c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
-                0x1a0013c4                Chip_Clock_GetRate
- .text.fpuInit  0x1a001410       0x54 out/libs/lpc_chip_43xx/src/fpu_init.o
-                0x1a001410                fpuInit
+                0x1a001478       0x4c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a001478                Chip_Clock_GetRate
+ .text.fpuInit  0x1a0014c4       0x54 out/libs/lpc_chip_43xx/src/fpu_init.o
+                0x1a0014c4                fpuInit
  .text.Chip_GPIO_Init
-                0x1a001464        0x2 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
-                0x1a001464                Chip_GPIO_Init
+                0x1a001518        0x2 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
+                0x1a001518                Chip_GPIO_Init
  .text.Chip_GPIO_SetDir
-                0x1a001466       0x24 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
-                0x1a001466                Chip_GPIO_SetDir
- *fill*         0x1a00148a        0x2 ff
+                0x1a00151a       0x24 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
+                0x1a00151a                Chip_GPIO_SetDir
+ *fill*         0x1a00153e        0x2 ff
  .text.Chip_SetupCoreClock
-                0x1a00148c      0x158 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
-                0x1a00148c                Chip_SetupCoreClock
+                0x1a001540      0x158 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
+                0x1a001540                Chip_SetupCoreClock
  .text.Chip_UART_GetIndex
-                0x1a0015e4       0x2c out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+                0x1a001698       0x2c out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
  .text.Chip_UART_Init
-                0x1a001610       0x54 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
-                0x1a001610                Chip_UART_Init
+                0x1a0016c4       0x54 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+                0x1a0016c4                Chip_UART_Init
  .text.Chip_UART_SetBaud
-                0x1a001664       0x40 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
-                0x1a001664                Chip_UART_SetBaud
+                0x1a001718       0x40 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+                0x1a001718                Chip_UART_SetBaud
  .text.Chip_UART_SetBaudFDR
-                0x1a0016a4       0xe8 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
-                0x1a0016a4                Chip_UART_SetBaudFDR
+                0x1a001758       0xe8 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+                0x1a001758                Chip_UART_SetBaudFDR
  .text.Board_LED_Init
-                0x1a00178c       0x44 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+                0x1a001840       0x44 out/libs/lpc_board_ciaa_edu_4337/src/board.o
  .text.Board_UART_Init
-                0x1a0017d0       0x14 out/libs/lpc_board_ciaa_edu_4337/src/board.o
-                0x1a0017d0                Board_UART_Init
+                0x1a001884       0x14 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+                0x1a001884                Board_UART_Init
  .text.Board_Debug_Init
-                0x1a0017e4       0x28 out/libs/lpc_board_ciaa_edu_4337/src/board.o
-                0x1a0017e4                Board_Debug_Init
+                0x1a001898       0x28 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+                0x1a001898                Board_Debug_Init
  .text.Board_Init
-                0x1a00180c       0x28 out/libs/lpc_board_ciaa_edu_4337/src/board.o
-                0x1a00180c                Board_Init
+                0x1a0018c0       0x28 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+                0x1a0018c0                Board_Init
  .text.Board_SetupMuxing
-                0x1a001834       0x38 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
-                0x1a001834                Board_SetupMuxing
+                0x1a0018e8       0x38 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+                0x1a0018e8                Board_SetupMuxing
  .text.Board_SetupClocking
-                0x1a00186c       0x6c out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
-                0x1a00186c                Board_SetupClocking
+                0x1a001920       0x6c out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+                0x1a001920                Board_SetupClocking
  .text.Board_SystemInit
-                0x1a0018d8        0xc out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
-                0x1a0018d8                Board_SystemInit
+                0x1a00198c        0xc out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+                0x1a00198c                Board_SystemInit
  .text.ResetISR
-                0x1a0018e4       0x7c out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
-                0x1a0018e4                ResetISR
+                0x1a001998       0x7c out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
+                0x1a001998                ResetISR
  .text.SystemInit
-                0x1a001960        0xc out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
-                0x1a001960                SystemInit
+                0x1a001a14        0xc out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
+                0x1a001a14                SystemInit
  .text.boardConfig
-                0x1a00196c       0xee out/libs/sapi/src/sapi_board.o
-                0x1a00196c                boardConfig
+                0x1a001a20       0xee out/libs/sapi/src/sapi_board.o
+                0x1a001a20                boardConfig
  .text.sAPI_NullFuncPtr
-                0x1a001a5a        0x4 out/libs/sapi/src/sapi_datatypes.o
-                0x1a001a5a                sAPI_NullFuncPtr
- *fill*         0x1a001a5e        0x2 ff
- .text.delay    0x1a001a60       0x38 out/libs/sapi/src/sapi_delay.o
-                0x1a001a60                delay
+                0x1a001b0e        0x4 out/libs/sapi/src/sapi_datatypes.o
+                0x1a001b0e                sAPI_NullFuncPtr
+ *fill*         0x1a001b12        0x2 ff
+ .text.delay    0x1a001b14       0x38 out/libs/sapi/src/sapi_delay.o
+                0x1a001b14                delay
  .text.delayConfig
-                0x1a001a98       0x20 out/libs/sapi/src/sapi_delay.o
-                0x1a001a98                delayConfig
+                0x1a001b4c       0x20 out/libs/sapi/src/sapi_delay.o
+                0x1a001b4c                delayConfig
  .text.delayRead
-                0x1a001ab8       0x3e out/libs/sapi/src/sapi_delay.o
-                0x1a001ab8                delayRead
- *fill*         0x1a001af6        0x2 ff
+                0x1a001b6c       0x3e out/libs/sapi/src/sapi_delay.o
+                0x1a001b6c                delayRead
+ *fill*         0x1a001baa        0x2 ff
  .text.gpioObtainPinConfig
-                0x1a001af8       0x34 out/libs/sapi/src/sapi_gpio.o
+                0x1a001bac       0x34 out/libs/sapi/src/sapi_gpio.o
  .text.gpioConfig
-                0x1a001b2c      0x174 out/libs/sapi/src/sapi_gpio.o
-                0x1a001b2c                gpioConfig
+                0x1a001be0      0x174 out/libs/sapi/src/sapi_gpio.o
+                0x1a001be0                gpioConfig
  .text.gpioWrite
-                0x1a001ca0       0x56 out/libs/sapi/src/sapi_gpio.o
-                0x1a001ca0                gpioWrite
+                0x1a001d54       0x56 out/libs/sapi/src/sapi_gpio.o
+                0x1a001d54                gpioWrite
  .text.gpioRead
-                0x1a001cf6       0x54 out/libs/sapi/src/sapi_gpio.o
-                0x1a001cf6                gpioRead
+                0x1a001daa       0x54 out/libs/sapi/src/sapi_gpio.o
+                0x1a001daa                gpioRead
  .text.gpioToggle
-                0x1a001d4a       0x16 out/libs/sapi/src/sapi_gpio.o
-                0x1a001d4a                gpioToggle
+                0x1a001dfe       0x16 out/libs/sapi/src/sapi_gpio.o
+                0x1a001dfe                gpioToggle
  .text.tickConfig
-                0x1a001d60       0x78 out/libs/sapi/src/sapi_tick.o
-                0x1a001d60                tickConfig
+                0x1a001e14       0x78 out/libs/sapi/src/sapi_tick.o
+                0x1a001e14                tickConfig
  .text.tickRead
-                0x1a001dd8        0xc out/libs/sapi/src/sapi_tick.o
-                0x1a001dd8                tickRead
+                0x1a001e8c        0xc out/libs/sapi/src/sapi_tick.o
+                0x1a001e8c                tickRead
  .text.SysTick_Handler
-                0x1a001de4       0x24 out/libs/sapi/src/sapi_tick.o
-                0x1a001de4                SysTick_Handler
+                0x1a001e98       0x24 out/libs/sapi/src/sapi_tick.o
+                0x1a001e98                SysTick_Handler
  .text.errorOcurred
-                0x1a001e08        0x2 out/libs/sapi/src/sapi_timer.o
+                0x1a001ebc        0x2 out/libs/sapi/src/sapi_timer.o
  .text.doNothing
-                0x1a001e0a        0x2 out/libs/sapi/src/sapi_timer.o
+                0x1a001ebe        0x2 out/libs/sapi/src/sapi_timer.o
  .text.TIMER0_IRQHandler
-                0x1a001e0c       0x40 out/libs/sapi/src/sapi_timer.o
-                0x1a001e0c                TIMER0_IRQHandler
+                0x1a001ec0       0x40 out/libs/sapi/src/sapi_timer.o
+                0x1a001ec0                TIMER0_IRQHandler
  .text.TIMER1_IRQHandler
-                0x1a001e4c       0x40 out/libs/sapi/src/sapi_timer.o
-                0x1a001e4c                TIMER1_IRQHandler
+                0x1a001f00       0x40 out/libs/sapi/src/sapi_timer.o
+                0x1a001f00                TIMER1_IRQHandler
  .text.TIMER2_IRQHandler
-                0x1a001e8c       0x44 out/libs/sapi/src/sapi_timer.o
-                0x1a001e8c                TIMER2_IRQHandler
+                0x1a001f40       0x44 out/libs/sapi/src/sapi_timer.o
+                0x1a001f40                TIMER2_IRQHandler
  .text.TIMER3_IRQHandler
-                0x1a001ed0       0x44 out/libs/sapi/src/sapi_timer.o
-                0x1a001ed0                TIMER3_IRQHandler
+                0x1a001f84       0x44 out/libs/sapi/src/sapi_timer.o
+                0x1a001f84                TIMER3_IRQHandler
  .text.uartConfig
-                0x1a001f14       0x64 out/libs/sapi/src/sapi_uart.o
-                0x1a001f14                uartConfig
+                0x1a001fc8       0x64 out/libs/sapi/src/sapi_uart.o
+                0x1a001fc8                uartConfig
  .text.uartWriteByte
-                0x1a001f78       0x30 out/libs/sapi/src/sapi_uart.o
-                0x1a001f78                uartWriteByte
+                0x1a00202c       0x30 out/libs/sapi/src/sapi_uart.o
+                0x1a00202c                uartWriteByte
  .text.uartWriteString
-                0x1a001fa8       0x18 out/libs/sapi/src/sapi_uart.o
-                0x1a001fa8                uartWriteString
+                0x1a00205c       0x18 out/libs/sapi/src/sapi_uart.o
+                0x1a00205c                uartWriteString
  .text.UART2_IRQHandler
-                0x1a001fc0        0x2 out/libs/sapi/src/sapi_uart.o
-                0x1a001fc0                UART2_IRQHandler
+                0x1a002074        0x2 out/libs/sapi/src/sapi_uart.o
+                0x1a002074                UART2_IRQHandler
  .text.UART3_IRQHandler
-                0x1a001fc2        0x2 out/libs/sapi/src/sapi_uart.o
-                0x1a001fc2                UART3_IRQHandler
- .text          0x1a001fc4       0x30 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_aeabi_uldivmod.o)
-                0x1a001fc4                __aeabi_uldivmod
- .text          0x1a001ff4      0x2dc c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_udivmoddi4.o)
-                0x1a001ff4                __udivmoddi4
- .text          0x1a0022d0        0x4 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_dvmd_tls.o)
-                0x1a0022d0                __aeabi_idiv0
-                0x1a0022d0                __aeabi_ldiv0
- .text.memset   0x1a0022d4       0x10 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-memset.o)
-                0x1a0022d4                memset
+                0x1a002076        0x2 out/libs/sapi/src/sapi_uart.o
+                0x1a002076                UART3_IRQHandler
+ .text          0x1a002078       0x30 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_aeabi_uldivmod.o)
+                0x1a002078                __aeabi_uldivmod
+ .text          0x1a0020a8      0x2dc c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_udivmoddi4.o)
+                0x1a0020a8                __udivmoddi4
+ .text          0x1a002384        0x4 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_dvmd_tls.o)
+                0x1a002384                __aeabi_idiv0
+                0x1a002384                __aeabi_ldiv0
+ .text.memset   0x1a002388       0x10 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-memset.o)
+                0x1a002388                memset
  *(.rodata .rodata.* .constdata .constdata.*)
  .rodata.pinesTeclado
-                0x1a0022e4       0x20 out/app/src/MEF_tecladoMatricial.o
+                0x1a002398       0x20 out/app/src/MEF_tecladoMatricial.o
  .rodata.EstadoInterno.str1.4
-                0x1a002304      0x28a out/app/src/Test.o
- *fill*         0x1a00258e        0x2 ff
+                0x1a0023b8      0x252 out/app/src/Test.o
+ *fill*         0x1a00260a        0x2 ff
  .rodata.itoa.str1.4
-                0x1a002590       0x48 out/app/src/Test.o
+                0x1a00260c       0x48 out/app/src/Test.o
  .rodata.uartWriteMiDato.str1.4
-                0x1a0025d8       0x48 out/app/src/Test.o
+                0x1a002654       0x48 out/app/src/Test.o
                                   0x3 (size before relaxing)
- .rodata        0x1a0025d8        0x4 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+ .rodata        0x1a002654        0x4 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
  .rodata.Chip_Clock_SetDivider.str1.4
-                0x1a0025dc        0x8 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a002658        0x8 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
                                   0x6 (size before relaxing)
  .rodata.periph_to_base
-                0x1a0025e4       0x6c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x1a002660       0x6c out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
  .rodata.InitClkStates
-                0x1a002650       0x48 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
+                0x1a0026cc       0x48 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
  .rodata.UART_BClock
-                0x1a002698        0x8 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+                0x1a002714        0x8 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
  .rodata.UART_PClock
-                0x1a0026a0        0x8 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+                0x1a00271c        0x8 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
  .rodata.ExtRateIn
-                0x1a0026a8        0x4 out/libs/lpc_board_ciaa_edu_4337/src/board.o
-                0x1a0026a8                ExtRateIn
+                0x1a002724        0x4 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+                0x1a002724                ExtRateIn
  .rodata.OscRateIn
-                0x1a0026ac        0x4 out/libs/lpc_board_ciaa_edu_4337/src/board.o
-                0x1a0026ac                OscRateIn
+                0x1a002728        0x4 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+                0x1a002728                OscRateIn
  .rodata.gpioLEDBits
-                0x1a0026b0        0xc out/libs/lpc_board_ciaa_edu_4337/src/board.o
+                0x1a00272c        0xc out/libs/lpc_board_ciaa_edu_4337/src/board.o
  .rodata.InitClkStates
-                0x1a0026bc        0xc out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+                0x1a002738        0xc out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
  .rodata.pinmuxing
-                0x1a0026c8       0x60 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+                0x1a002744       0x60 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
  .rodata.gpioPinsConfig
-                0x1a002728      0x136 out/libs/sapi/src/sapi_gpio.o
-                0x1a002728                gpioPinsConfig
-                0x1a002860                . = ALIGN (0x4)
- *fill*         0x1a00285e        0x2 ff
+                0x1a0027a4      0x136 out/libs/sapi/src/sapi_gpio.o
+                0x1a0027a4                gpioPinsConfig
+                0x1a0028dc                . = ALIGN (0x4)
+ *fill*         0x1a0028da        0x2 ff
 
-.glue_7         0x1a002860        0x0
- .glue_7        0x1a002860        0x0 linker stubs
+.glue_7         0x1a0028dc        0x0
+ .glue_7        0x1a0028dc        0x0 linker stubs
 
-.glue_7t        0x1a002860        0x0
- .glue_7t       0x1a002860        0x0 linker stubs
+.glue_7t        0x1a0028dc        0x0
+ .glue_7t       0x1a0028dc        0x0 linker stubs
 
-.vfp11_veneer   0x1a002860        0x0
- .vfp11_veneer  0x1a002860        0x0 linker stubs
+.vfp11_veneer   0x1a0028dc        0x0
+ .vfp11_veneer  0x1a0028dc        0x0 linker stubs
 
-.v4_bx          0x1a002860        0x0
- .v4_bx         0x1a002860        0x0 linker stubs
+.v4_bx          0x1a0028dc        0x0
+ .v4_bx         0x1a0028dc        0x0 linker stubs
 
-.iplt           0x1a002860        0x0
- .iplt          0x1a002860        0x0 out/app/src/Ascensor.o
+.iplt           0x1a0028dc        0x0
+ .iplt          0x1a0028dc        0x0 out/app/src/Ascensor.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x1a002860                __exidx_start = .
+                0x1a0028dc                __exidx_start = .
 
-.ARM.exidx      0x1a002860        0x8
+.ARM.exidx      0x1a0028dc        0x8
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
- .ARM.exidx     0x1a002860        0x8 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_udivmoddi4.o)
-                0x1a002868                __exidx_end = .
-                0x1a002868                _etext = .
+ .ARM.exidx     0x1a0028dc        0x8 c:/ciaa/embeddedide/gcc-arm-embedded/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_udivmoddi4.o)
+                0x1a0028e4                __exidx_end = .
+                0x1a0028e4                _etext = .
 
-.rel.dyn        0x1a002868        0x0
- .rel.iplt      0x1a002868        0x0 out/app/src/Ascensor.o
+.rel.dyn        0x1a0028e4        0x0
+ .rel.iplt      0x1a0028e4        0x0 out/app/src/Ascensor.o
 
-.data_RAM2      0x10080000        0x0 load address 0x1a002868
+.data_RAM2      0x10080000        0x0 load address 0x1a0028e4
  FILL mask 0xff
  *(.ramfunc.$RAM2)
  *(.ramfunc.$RamLoc40)
@@ -10686,7 +10692,7 @@ END GROUP
  *(.data.$RamLoc40*)
                 0x10080000                . = ALIGN (0x4)
 
-.data_RAM3      0x20000000        0x0 load address 0x1a002868
+.data_RAM3      0x20000000        0x0 load address 0x1a0028e4
  FILL mask 0xff
  *(.ramfunc.$RAM3)
  *(.ramfunc.$RamAHB32)
@@ -10694,7 +10700,7 @@ END GROUP
  *(.data.$RamAHB32*)
                 0x20000000                . = ALIGN (0x4)
 
-.data_RAM4      0x20008000        0x0 load address 0x1a002868
+.data_RAM4      0x20008000        0x0 load address 0x1a0028e4
  FILL mask 0xff
  *(.ramfunc.$RAM4)
  *(.ramfunc.$RamAHB16)
@@ -10702,7 +10708,7 @@ END GROUP
  *(.data.$RamAHB16*)
                 0x20008000                . = ALIGN (0x4)
 
-.data_RAM5      0x2000c000        0x0 load address 0x1a002868
+.data_RAM5      0x2000c000        0x0 load address 0x1a0028e4
  FILL mask 0xff
  *(.ramfunc.$RAM5)
  *(.ramfunc.$RamAHB_ETB16)
@@ -10716,7 +10722,7 @@ END GROUP
                 0x10000000                . = ALIGN (0x4)
                 0x10000000                _end_uninit_RESERVED = .
 
-.data           0x10000000       0x68 load address 0x1a002868
+.data           0x10000000       0x68 load address 0x1a0028e4
  FILL mask 0xff
                 0x10000000                _data = .
  *(vtable)
@@ -10752,7 +10758,7 @@ END GROUP
                 0x10000068                . = ALIGN (0x4)
                 0x10000068                _edata = .
 
-.igot.plt       0x10000068        0x0 load address 0x1a0028d0
+.igot.plt       0x10000068        0x0 load address 0x1a00294c
  .igot.plt      0x10000068        0x0 out/app/src/Ascensor.o
 
 .bss_RAM2       0x10080000        0x0
@@ -10783,15 +10789,13 @@ END GROUP
  .bss.pideConfiguracion
                 0x1000006c        0x1 out/app/src/MEFAscensorPuertas.o
                 0x1000006c                pideConfiguracion
- .bss.pideNuevoPiso
-                0x1000006d        0x1 out/app/src/MEFAscensorPuertas.o
-                0x1000006d                pideNuevoPiso
  .bss.pisoActual
-                0x1000006e        0x1 out/app/src/MEFAscensorPuertas.o
-                0x1000006e                pisoActual
+                0x1000006d        0x1 out/app/src/MEFAscensorPuertas.o
+                0x1000006d                pisoActual
  .bss.pisoDestino
-                0x1000006f        0x1 out/app/src/MEFAscensorPuertas.o
-                0x1000006f                pisoDestino
+                0x1000006e        0x1 out/app/src/MEFAscensorPuertas.o
+                0x1000006e                pisoDestino
+ *fill*         0x1000006f        0x1 
  .bss.almacenarPisos
                 0x10000070       0x28 out/app/src/MEF_tecladoMatricial.o
                 0x10000070                almacenarPisos
@@ -10813,26 +10817,25 @@ END GROUP
  .bss.segundoDigito
                 0x100000aa        0x2 out/app/src/MEF_tecladoMatricial.o
                 0x100000aa                segundoDigito
- .bss.pasos     0x100000ac        0x4 out/app/src/Test.o
-                0x100000ac                pasos
  .bss.centenasB
-                0x100000b0        0x1 out/app/src/driverDisplay.o
-                0x100000b0                centenasB
- .bss.decenasB  0x100000b1        0x1 out/app/src/driverDisplay.o
-                0x100000b1                decenasB
+                0x100000ac        0x1 out/app/src/driverDisplay.o
+                0x100000ac                centenasB
+ .bss.decenasB  0x100000ad        0x1 out/app/src/driverDisplay.o
+                0x100000ad                decenasB
  .bss.secuenciaB
-                0x100000b2        0x1 out/app/src/driverDisplay.o
-                0x100000b2                secuenciaB
+                0x100000ae        0x1 out/app/src/driverDisplay.o
+                0x100000ae                secuenciaB
  .bss.unidadesB
-                0x100000b3        0x1 out/app/src/driverDisplay.o
-                0x100000b3                unidadesB
+                0x100000af        0x1 out/app/src/driverDisplay.o
+                0x100000af                unidadesB
  .bss.unidadesmilB
-                0x100000b4        0x1 out/app/src/driverDisplay.o
-                0x100000b4                unidadesmilB
- *fill*         0x100000b5        0x3 
+                0x100000b0        0x1 out/app/src/driverDisplay.o
+                0x100000b0                unidadesmilB
+ *fill*         0x100000b1        0x3 
  .bss.audio_usb_pll_freq
-                0x100000b8        0x8 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+                0x100000b4        0x8 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
  *(COMMON)
+ *fill*         0x100000bc        0x4 
  COMMON         0x100000c0       0x18 out/app/src/Ascensor.o
                 0x100000c0                timSerial
  COMMON         0x100000d8       0x88 out/app/src/MEFAscensorPuertas.o
@@ -10882,33 +10885,33 @@ END GROUP
                 0x10000180                _end_noinit = .
                 0x10000180                PROVIDE (_pvHeapStart, .)
                 0x10008000                PROVIDE (_vStackTop, (__top_RamLoc32 - 0x0))
-                0x53ff5faa                PROVIDE (__valid_user_code_checksum, (0x0 - ((((((_vStackTop + (ResetISR + 0x1)) + (NMI_Handler + 0x1)) + (HardFault_Handler + 0x1)) + (DEFINED (MemManage_Handler)?MemManage_Handler:0x0 + 0x1)) + (DEFINED (BusFault_Handler)?BusFault_Handler:0x0 + 0x1)) + (DEFINED (UsageFault_Handler)?UsageFault_Handler:0x0 + 0x1))))
+                0x53ff5ef6                PROVIDE (__valid_user_code_checksum, (0x0 - ((((((_vStackTop + (ResetISR + 0x1)) + (NMI_Handler + 0x1)) + (HardFault_Handler + 0x1)) + (DEFINED (MemManage_Handler)?MemManage_Handler:0x0 + 0x1)) + (DEFINED (BusFault_Handler)?BusFault_Handler:0x0 + 0x1)) + (DEFINED (UsageFault_Handler)?UsageFault_Handler:0x0 + 0x1))))
 OUTPUT(out/programa.elf elf32-littlearm)
 
-.debug_info     0x00000000    0x1713f
- .debug_info    0x00000000     0x11bf out/app/src/Ascensor.o
- .debug_info    0x000011bf     0x15f4 out/app/src/MEFAscensorPuertas.o
- .debug_info    0x000027b3     0x12e7 out/app/src/MEF_tecladoMatricial.o
- .debug_info    0x00003a9a     0x140b out/app/src/Test.o
- .debug_info    0x00004ea5     0x126a out/app/src/driverDisplay.o
- .debug_info    0x0000610f      0xc3b out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
- .debug_info    0x00006d4a     0x18e4 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
- .debug_info    0x0000862e      0x14c out/libs/lpc_chip_43xx/src/fpu_init.o
- .debug_info    0x0000877a      0x4c8 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
- .debug_info    0x00008c42      0xb07 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
- .debug_info    0x00009749     0x164c out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
- .debug_info    0x0000ad95     0x212f out/libs/lpc_board_ciaa_edu_4337/src/board.o
- .debug_info    0x0000cec4     0x14b0 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
- .debug_info    0x0000e374      0x2ec out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
- .debug_info    0x0000e660       0x3f out/libs/lpc_board_ciaa_edu_4337/src/crp.o
- .debug_info    0x0000e69f      0x95e out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
- .debug_info    0x0000effd      0xdc8 out/libs/sapi/src/sapi_board.o
- .debug_info    0x0000fdc5      0x957 out/libs/sapi/src/sapi_datatypes.o
- .debug_info    0x0001071c      0xb22 out/libs/sapi/src/sapi_delay.o
- .debug_info    0x0001123e     0x19d5 out/libs/sapi/src/sapi_gpio.o
- .debug_info    0x00012c13     0x1438 out/libs/sapi/src/sapi_tick.o
- .debug_info    0x0001404b     0x1c99 out/libs/sapi/src/sapi_timer.o
- .debug_info    0x00015ce4     0x145b out/libs/sapi/src/sapi_uart.o
+.debug_info     0x00000000    0x171c8
+ .debug_info    0x00000000     0x11e5 out/app/src/Ascensor.o
+ .debug_info    0x000011e5     0x1659 out/app/src/MEFAscensorPuertas.o
+ .debug_info    0x0000283e     0x12e7 out/app/src/MEF_tecladoMatricial.o
+ .debug_info    0x00003b25     0x1409 out/app/src/Test.o
+ .debug_info    0x00004f2e     0x126a out/app/src/driverDisplay.o
+ .debug_info    0x00006198      0xc3b out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
+ .debug_info    0x00006dd3     0x18e4 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+ .debug_info    0x000086b7      0x14c out/libs/lpc_chip_43xx/src/fpu_init.o
+ .debug_info    0x00008803      0x4c8 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
+ .debug_info    0x00008ccb      0xb07 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
+ .debug_info    0x000097d2     0x164c out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+ .debug_info    0x0000ae1e     0x212f out/libs/lpc_board_ciaa_edu_4337/src/board.o
+ .debug_info    0x0000cf4d     0x14b0 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+ .debug_info    0x0000e3fd      0x2ec out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
+ .debug_info    0x0000e6e9       0x3f out/libs/lpc_board_ciaa_edu_4337/src/crp.o
+ .debug_info    0x0000e728      0x95e out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
+ .debug_info    0x0000f086      0xdc8 out/libs/sapi/src/sapi_board.o
+ .debug_info    0x0000fe4e      0x957 out/libs/sapi/src/sapi_datatypes.o
+ .debug_info    0x000107a5      0xb22 out/libs/sapi/src/sapi_delay.o
+ .debug_info    0x000112c7     0x19d5 out/libs/sapi/src/sapi_gpio.o
+ .debug_info    0x00012c9c     0x1438 out/libs/sapi/src/sapi_tick.o
+ .debug_info    0x000140d4     0x1c99 out/libs/sapi/src/sapi_timer.o
+ .debug_info    0x00015d6d     0x145b out/libs/sapi/src/sapi_uart.o
 
 .debug_abbrev   0x00000000     0x375a
  .debug_abbrev  0x00000000      0x250 out/app/src/Ascensor.o
@@ -10935,26 +10938,26 @@ OUTPUT(out/programa.elf elf32-littlearm)
  .debug_abbrev  0x0000302d      0x3cd out/libs/sapi/src/sapi_timer.o
  .debug_abbrev  0x000033fa      0x360 out/libs/sapi/src/sapi_uart.o
 
-.debug_loc      0x00000000     0x48ce
+.debug_loc      0x00000000     0x48c3
  .debug_loc     0x00000000       0x21 out/app/src/Ascensor.o
- .debug_loc     0x00000021       0x2a out/app/src/MEFAscensorPuertas.o
- .debug_loc     0x0000004b      0x1df out/app/src/MEF_tecladoMatricial.o
- .debug_loc     0x0000022a      0x1bc out/app/src/Test.o
- .debug_loc     0x000003e6       0xd8 out/app/src/driverDisplay.o
- .debug_loc     0x000004be     0x1295 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
- .debug_loc     0x00001753       0x2b out/libs/lpc_chip_43xx/src/fpu_init.o
- .debug_loc     0x0000177e      0x3d8 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
- .debug_loc     0x00001b56      0x14d out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
- .debug_loc     0x00001ca3      0xd25 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
- .debug_loc     0x000029c8      0x5e2 out/libs/lpc_board_ciaa_edu_4337/src/board.o
- .debug_loc     0x00002faa       0xc3 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
- .debug_loc     0x0000306d      0x206 out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
- .debug_loc     0x00003273       0x21 out/libs/sapi/src/sapi_datatypes.o
- .debug_loc     0x00003294      0x1af out/libs/sapi/src/sapi_delay.o
- .debug_loc     0x00003443      0x60e out/libs/sapi/src/sapi_gpio.o
- .debug_loc     0x00003a51      0x129 out/libs/sapi/src/sapi_tick.o
- .debug_loc     0x00003b7a      0x7c0 out/libs/sapi/src/sapi_timer.o
- .debug_loc     0x0000433a      0x594 out/libs/sapi/src/sapi_uart.o
+ .debug_loc     0x00000021       0x1f out/app/src/MEFAscensorPuertas.o
+ .debug_loc     0x00000040      0x1df out/app/src/MEF_tecladoMatricial.o
+ .debug_loc     0x0000021f      0x1bc out/app/src/Test.o
+ .debug_loc     0x000003db       0xd8 out/app/src/driverDisplay.o
+ .debug_loc     0x000004b3     0x1295 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+ .debug_loc     0x00001748       0x2b out/libs/lpc_chip_43xx/src/fpu_init.o
+ .debug_loc     0x00001773      0x3d8 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
+ .debug_loc     0x00001b4b      0x14d out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
+ .debug_loc     0x00001c98      0xd25 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+ .debug_loc     0x000029bd      0x5e2 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+ .debug_loc     0x00002f9f       0xc3 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+ .debug_loc     0x00003062      0x206 out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
+ .debug_loc     0x00003268       0x21 out/libs/sapi/src/sapi_datatypes.o
+ .debug_loc     0x00003289      0x1af out/libs/sapi/src/sapi_delay.o
+ .debug_loc     0x00003438      0x60e out/libs/sapi/src/sapi_gpio.o
+ .debug_loc     0x00003a46      0x129 out/libs/sapi/src/sapi_tick.o
+ .debug_loc     0x00003b6f      0x7c0 out/libs/sapi/src/sapi_timer.o
+ .debug_loc     0x0000432f      0x594 out/libs/sapi/src/sapi_uart.o
 
 .debug_aranges  0x00000000      0x710
  .debug_aranges
@@ -11028,187 +11031,188 @@ OUTPUT(out/programa.elf elf32-littlearm)
  .debug_ranges  0x000005a0       0x80 out/libs/sapi/src/sapi_timer.o
  .debug_ranges  0x00000620       0x50 out/libs/sapi/src/sapi_uart.o
 
-.debug_macro    0x00000000     0xa948
- .debug_macro   0x00000000      0x55b out/app/src/Ascensor.o
- .debug_macro   0x0000055b      0x8b0 out/app/src/Ascensor.o
- .debug_macro   0x00000e0b       0x22 out/app/src/Ascensor.o
- .debug_macro   0x00000e2d       0x87 out/app/src/Ascensor.o
- .debug_macro   0x00000eb4       0x51 out/app/src/Ascensor.o
- .debug_macro   0x00000f05       0xef out/app/src/Ascensor.o
- .debug_macro   0x00000ff4       0x6a out/app/src/Ascensor.o
- .debug_macro   0x0000105e      0x1df out/app/src/Ascensor.o
- .debug_macro   0x0000123d       0x10 out/app/src/Ascensor.o
- .debug_macro   0x0000124d       0x22 out/app/src/Ascensor.o
- .debug_macro   0x0000126f       0x66 out/app/src/Ascensor.o
- .debug_macro   0x000012d5       0x28 out/app/src/Ascensor.o
- .debug_macro   0x000012fd       0x3b out/app/src/Ascensor.o
- .debug_macro   0x00001338       0x2d out/app/src/Ascensor.o
- .debug_macro   0x00001365       0x42 out/app/src/Ascensor.o
- .debug_macro   0x000013a7      0xd39 out/app/src/Ascensor.o
- .debug_macro   0x000020e0      0x2bc out/app/src/Ascensor.o
- .debug_macro   0x0000239c      0x112 out/app/src/Ascensor.o
- .debug_macro   0x000024ae       0x11 out/app/src/Ascensor.o
- .debug_macro   0x000024bf       0x2a out/app/src/Ascensor.o
- .debug_macro   0x000024e9       0x16 out/app/src/Ascensor.o
- .debug_macro   0x000024ff      0x2e6 out/app/src/Ascensor.o
- .debug_macro   0x000027e5       0x82 out/app/src/Ascensor.o
- .debug_macro   0x00002867      0x13d out/app/src/Ascensor.o
- .debug_macro   0x000029a4      0x198 out/app/src/Ascensor.o
- .debug_macro   0x00002b3c       0x34 out/app/src/Ascensor.o
- .debug_macro   0x00002b70       0x58 out/app/src/Ascensor.o
- .debug_macro   0x00002bc8      0x236 out/app/src/Ascensor.o
- .debug_macro   0x00002dfe      0x572 out/app/src/Ascensor.o
- .debug_macro   0x00003370       0x16 out/app/src/Ascensor.o
- .debug_macro   0x00003386      0x18a out/app/src/Ascensor.o
- .debug_macro   0x00003510       0x88 out/app/src/Ascensor.o
- .debug_macro   0x00003598      0x1b9 out/app/src/Ascensor.o
- .debug_macro   0x00003751      0x1da out/app/src/Ascensor.o
- .debug_macro   0x0000392b       0x40 out/app/src/Ascensor.o
- .debug_macro   0x0000396b       0x1c out/app/src/Ascensor.o
- .debug_macro   0x00003987       0x2e out/app/src/Ascensor.o
- .debug_macro   0x000039b5       0x2e out/app/src/Ascensor.o
- .debug_macro   0x000039e3       0x22 out/app/src/Ascensor.o
- .debug_macro   0x00003a05      0x201 out/app/src/Ascensor.o
- .debug_macro   0x00003c06       0xe0 out/app/src/Ascensor.o
- .debug_macro   0x00003ce6      0x34c out/app/src/Ascensor.o
- .debug_macro   0x00004032       0xdc out/app/src/Ascensor.o
- .debug_macro   0x0000410e       0xc4 out/app/src/Ascensor.o
- .debug_macro   0x000041d2       0x94 out/app/src/Ascensor.o
- .debug_macro   0x00004266       0xb8 out/app/src/Ascensor.o
- .debug_macro   0x0000431e       0x4c out/app/src/Ascensor.o
- .debug_macro   0x0000436a       0x16 out/app/src/Ascensor.o
- .debug_macro   0x00004380      0x328 out/app/src/Ascensor.o
- .debug_macro   0x000046a8       0x3a out/app/src/Ascensor.o
- .debug_macro   0x000046e2       0xd0 out/app/src/Ascensor.o
- .debug_macro   0x000047b2       0x18 out/app/src/Ascensor.o
- .debug_macro   0x000047ca       0x22 out/app/src/Ascensor.o
- .debug_macro   0x000047ec       0x40 out/app/src/Ascensor.o
- .debug_macro   0x0000482c       0x4c out/app/src/Ascensor.o
- .debug_macro   0x00004878       0x58 out/app/src/Ascensor.o
- .debug_macro   0x000048d0       0x35 out/app/src/Ascensor.o
- .debug_macro   0x00004905       0x9c out/app/src/Ascensor.o
- .debug_macro   0x000049a1       0x16 out/app/src/Ascensor.o
- .debug_macro   0x000049b7       0x97 out/app/src/Ascensor.o
- .debug_macro   0x00004a4e      0x30d out/app/src/Ascensor.o
- .debug_macro   0x00004d5b       0xfd out/app/src/Ascensor.o
- .debug_macro   0x00004e58       0x10 out/app/src/Ascensor.o
- .debug_macro   0x00004e68       0x58 out/app/src/Ascensor.o
- .debug_macro   0x00004ec0       0x1f out/app/src/Ascensor.o
- .debug_macro   0x00004edf       0x43 out/app/src/Ascensor.o
- .debug_macro   0x00004f22       0x20 out/app/src/Ascensor.o
- .debug_macro   0x00004f42      0x187 out/app/src/Ascensor.o
- .debug_macro   0x000050c9       0x10 out/app/src/Ascensor.o
- .debug_macro   0x000050d9       0x1c out/app/src/Ascensor.o
- .debug_macro   0x000050f5       0x52 out/app/src/Ascensor.o
- .debug_macro   0x00005147       0x40 out/app/src/Ascensor.o
- .debug_macro   0x00005187       0x10 out/app/src/Ascensor.o
- .debug_macro   0x00005197       0x40 out/app/src/Ascensor.o
- .debug_macro   0x000051d7       0xd7 out/app/src/Ascensor.o
- .debug_macro   0x000052ae       0x16 out/app/src/Ascensor.o
- .debug_macro   0x000052c4      0x18b out/app/src/Ascensor.o
- .debug_macro   0x0000544f       0x20 out/app/src/Ascensor.o
- .debug_macro   0x0000546f       0x28 out/app/src/Ascensor.o
- .debug_macro   0x00005497       0x16 out/app/src/Ascensor.o
- .debug_macro   0x000054ad       0x3a out/app/src/Ascensor.o
- .debug_macro   0x000054e7       0x10 out/app/src/Ascensor.o
- .debug_macro   0x000054f7       0x70 out/app/src/Ascensor.o
- .debug_macro   0x00005567      0x5bb out/app/src/MEFAscensorPuertas.o
- .debug_macro   0x00005b22      0x52b out/app/src/MEF_tecladoMatricial.o
- .debug_macro   0x0000604d      0x547 out/app/src/Test.o
- .debug_macro   0x00006594      0x573 out/app/src/driverDisplay.o
- .debug_macro   0x00006b07      0x301 out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
- .debug_macro   0x00006e08      0x307 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
- .debug_macro   0x0000710f       0xe7 out/libs/lpc_chip_43xx/src/fpu_init.o
- .debug_macro   0x000071f6      0x301 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
- .debug_macro   0x000074f7      0x301 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
- .debug_macro   0x000077f8      0x301 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
- .debug_macro   0x00007af9      0x499 out/libs/lpc_board_ciaa_edu_4337/src/board.o
- .debug_macro   0x00007f92       0x46 out/libs/lpc_board_ciaa_edu_4337/src/board.o
- .debug_macro   0x00007fd8       0x16 out/libs/lpc_board_ciaa_edu_4337/src/board.o
- .debug_macro   0x00007fee      0x472 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
- .debug_macro   0x00008460       0x1d out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
- .debug_macro   0x0000847d       0x17 out/libs/lpc_board_ciaa_edu_4337/src/crp.o
- .debug_macro   0x00008494      0x472 out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
- .debug_macro   0x00008906      0x4a3 out/libs/sapi/src/sapi_board.o
- .debug_macro   0x00008da9      0x47b out/libs/sapi/src/sapi_datatypes.o
- .debug_macro   0x00009224      0x494 out/libs/sapi/src/sapi_delay.o
- .debug_macro   0x000096b8       0x10 out/libs/sapi/src/sapi_delay.o
- .debug_macro   0x000096c8      0x48f out/libs/sapi/src/sapi_gpio.o
- .debug_macro   0x00009b57      0x485 out/libs/sapi/src/sapi_tick.o
- .debug_macro   0x00009fdc      0x49b out/libs/sapi/src/sapi_timer.o
- .debug_macro   0x0000a477      0x4d1 out/libs/sapi/src/sapi_uart.o
+.debug_macro    0x00000000     0xa94f
+ .debug_macro   0x00000000      0x55a out/app/src/Ascensor.o
+ .debug_macro   0x0000055a      0x8b0 out/app/src/Ascensor.o
+ .debug_macro   0x00000e0a       0x22 out/app/src/Ascensor.o
+ .debug_macro   0x00000e2c       0x87 out/app/src/Ascensor.o
+ .debug_macro   0x00000eb3       0x51 out/app/src/Ascensor.o
+ .debug_macro   0x00000f04       0xef out/app/src/Ascensor.o
+ .debug_macro   0x00000ff3       0x6a out/app/src/Ascensor.o
+ .debug_macro   0x0000105d      0x1df out/app/src/Ascensor.o
+ .debug_macro   0x0000123c       0x10 out/app/src/Ascensor.o
+ .debug_macro   0x0000124c       0x22 out/app/src/Ascensor.o
+ .debug_macro   0x0000126e       0x66 out/app/src/Ascensor.o
+ .debug_macro   0x000012d4       0x28 out/app/src/Ascensor.o
+ .debug_macro   0x000012fc       0x3b out/app/src/Ascensor.o
+ .debug_macro   0x00001337       0x2d out/app/src/Ascensor.o
+ .debug_macro   0x00001364       0x42 out/app/src/Ascensor.o
+ .debug_macro   0x000013a6      0xd39 out/app/src/Ascensor.o
+ .debug_macro   0x000020df      0x2bc out/app/src/Ascensor.o
+ .debug_macro   0x0000239b      0x112 out/app/src/Ascensor.o
+ .debug_macro   0x000024ad       0x11 out/app/src/Ascensor.o
+ .debug_macro   0x000024be       0x2a out/app/src/Ascensor.o
+ .debug_macro   0x000024e8       0x16 out/app/src/Ascensor.o
+ .debug_macro   0x000024fe      0x2e6 out/app/src/Ascensor.o
+ .debug_macro   0x000027e4       0x82 out/app/src/Ascensor.o
+ .debug_macro   0x00002866      0x13d out/app/src/Ascensor.o
+ .debug_macro   0x000029a3      0x198 out/app/src/Ascensor.o
+ .debug_macro   0x00002b3b       0x34 out/app/src/Ascensor.o
+ .debug_macro   0x00002b6f       0x58 out/app/src/Ascensor.o
+ .debug_macro   0x00002bc7      0x236 out/app/src/Ascensor.o
+ .debug_macro   0x00002dfd      0x572 out/app/src/Ascensor.o
+ .debug_macro   0x0000336f       0x16 out/app/src/Ascensor.o
+ .debug_macro   0x00003385      0x18a out/app/src/Ascensor.o
+ .debug_macro   0x0000350f       0x88 out/app/src/Ascensor.o
+ .debug_macro   0x00003597      0x1b9 out/app/src/Ascensor.o
+ .debug_macro   0x00003750      0x1da out/app/src/Ascensor.o
+ .debug_macro   0x0000392a       0x40 out/app/src/Ascensor.o
+ .debug_macro   0x0000396a       0x1c out/app/src/Ascensor.o
+ .debug_macro   0x00003986       0x2e out/app/src/Ascensor.o
+ .debug_macro   0x000039b4       0x2e out/app/src/Ascensor.o
+ .debug_macro   0x000039e2       0x22 out/app/src/Ascensor.o
+ .debug_macro   0x00003a04      0x201 out/app/src/Ascensor.o
+ .debug_macro   0x00003c05       0xe0 out/app/src/Ascensor.o
+ .debug_macro   0x00003ce5      0x34c out/app/src/Ascensor.o
+ .debug_macro   0x00004031       0xdc out/app/src/Ascensor.o
+ .debug_macro   0x0000410d       0xc4 out/app/src/Ascensor.o
+ .debug_macro   0x000041d1       0x94 out/app/src/Ascensor.o
+ .debug_macro   0x00004265       0xb8 out/app/src/Ascensor.o
+ .debug_macro   0x0000431d       0x4c out/app/src/Ascensor.o
+ .debug_macro   0x00004369       0x16 out/app/src/Ascensor.o
+ .debug_macro   0x0000437f      0x328 out/app/src/Ascensor.o
+ .debug_macro   0x000046a7       0x3a out/app/src/Ascensor.o
+ .debug_macro   0x000046e1       0xd0 out/app/src/Ascensor.o
+ .debug_macro   0x000047b1       0x18 out/app/src/Ascensor.o
+ .debug_macro   0x000047c9       0x22 out/app/src/Ascensor.o
+ .debug_macro   0x000047eb       0x40 out/app/src/Ascensor.o
+ .debug_macro   0x0000482b       0x4c out/app/src/Ascensor.o
+ .debug_macro   0x00004877       0x58 out/app/src/Ascensor.o
+ .debug_macro   0x000048cf       0x35 out/app/src/Ascensor.o
+ .debug_macro   0x00004904       0x9c out/app/src/Ascensor.o
+ .debug_macro   0x000049a0       0x16 out/app/src/Ascensor.o
+ .debug_macro   0x000049b6       0x97 out/app/src/Ascensor.o
+ .debug_macro   0x00004a4d      0x30d out/app/src/Ascensor.o
+ .debug_macro   0x00004d5a       0xfd out/app/src/Ascensor.o
+ .debug_macro   0x00004e57       0x10 out/app/src/Ascensor.o
+ .debug_macro   0x00004e67       0x58 out/app/src/Ascensor.o
+ .debug_macro   0x00004ebf       0x1f out/app/src/Ascensor.o
+ .debug_macro   0x00004ede       0x43 out/app/src/Ascensor.o
+ .debug_macro   0x00004f21       0x20 out/app/src/Ascensor.o
+ .debug_macro   0x00004f41      0x187 out/app/src/Ascensor.o
+ .debug_macro   0x000050c8       0x10 out/app/src/Ascensor.o
+ .debug_macro   0x000050d8       0x1c out/app/src/Ascensor.o
+ .debug_macro   0x000050f4       0x52 out/app/src/Ascensor.o
+ .debug_macro   0x00005146       0x40 out/app/src/Ascensor.o
+ .debug_macro   0x00005186       0x10 out/app/src/Ascensor.o
+ .debug_macro   0x00005196       0x40 out/app/src/Ascensor.o
+ .debug_macro   0x000051d6       0xd7 out/app/src/Ascensor.o
+ .debug_macro   0x000052ad       0x16 out/app/src/Ascensor.o
+ .debug_macro   0x000052c3      0x18b out/app/src/Ascensor.o
+ .debug_macro   0x0000544e       0x20 out/app/src/Ascensor.o
+ .debug_macro   0x0000546e       0x28 out/app/src/Ascensor.o
+ .debug_macro   0x00005496       0x16 out/app/src/Ascensor.o
+ .debug_macro   0x000054ac       0x3a out/app/src/Ascensor.o
+ .debug_macro   0x000054e6       0x10 out/app/src/Ascensor.o
+ .debug_macro   0x000054f6       0x70 out/app/src/Ascensor.o
+ .debug_macro   0x00005566       0x76 out/app/src/Ascensor.o
+ .debug_macro   0x000055dc      0x560 out/app/src/MEFAscensorPuertas.o
+ .debug_macro   0x00005b3c      0x52b out/app/src/MEF_tecladoMatricial.o
+ .debug_macro   0x00006067      0x534 out/app/src/Test.o
+ .debug_macro   0x0000659b      0x573 out/app/src/driverDisplay.o
+ .debug_macro   0x00006b0e      0x301 out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
+ .debug_macro   0x00006e0f      0x307 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+ .debug_macro   0x00007116       0xe7 out/libs/lpc_chip_43xx/src/fpu_init.o
+ .debug_macro   0x000071fd      0x301 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
+ .debug_macro   0x000074fe      0x301 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
+ .debug_macro   0x000077ff      0x301 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+ .debug_macro   0x00007b00      0x499 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+ .debug_macro   0x00007f99       0x46 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+ .debug_macro   0x00007fdf       0x16 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+ .debug_macro   0x00007ff5      0x472 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+ .debug_macro   0x00008467       0x1d out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
+ .debug_macro   0x00008484       0x17 out/libs/lpc_board_ciaa_edu_4337/src/crp.o
+ .debug_macro   0x0000849b      0x472 out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
+ .debug_macro   0x0000890d      0x4a3 out/libs/sapi/src/sapi_board.o
+ .debug_macro   0x00008db0      0x47b out/libs/sapi/src/sapi_datatypes.o
+ .debug_macro   0x0000922b      0x494 out/libs/sapi/src/sapi_delay.o
+ .debug_macro   0x000096bf       0x10 out/libs/sapi/src/sapi_delay.o
+ .debug_macro   0x000096cf      0x48f out/libs/sapi/src/sapi_gpio.o
+ .debug_macro   0x00009b5e      0x485 out/libs/sapi/src/sapi_tick.o
+ .debug_macro   0x00009fe3      0x49b out/libs/sapi/src/sapi_timer.o
+ .debug_macro   0x0000a47e      0x4d1 out/libs/sapi/src/sapi_uart.o
 
-.debug_line     0x00000000     0xb3df
- .debug_line    0x00000000      0x968 out/app/src/Ascensor.o
- .debug_line    0x00000968      0xa01 out/app/src/MEFAscensorPuertas.o
- .debug_line    0x00001369      0xa1c out/app/src/MEF_tecladoMatricial.o
- .debug_line    0x00001d85      0x9a3 out/app/src/Test.o
- .debug_line    0x00002728      0x9a4 out/app/src/driverDisplay.o
- .debug_line    0x000030cc      0x6bd out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
- .debug_line    0x00003789      0xa93 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
- .debug_line    0x0000421c      0x279 out/libs/lpc_chip_43xx/src/fpu_init.o
- .debug_line    0x00004495      0x6e5 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
- .debug_line    0x00004b7a      0x733 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
- .debug_line    0x000052ad      0x95b out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
- .debug_line    0x00005c08      0x977 out/libs/lpc_board_ciaa_edu_4337/src/board.o
- .debug_line    0x0000657f      0x830 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
- .debug_line    0x00006daf       0xe0 out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
- .debug_line    0x00006e8f       0x47 out/libs/lpc_board_ciaa_edu_4337/src/crp.o
- .debug_line    0x00006ed6      0x7d0 out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
- .debug_line    0x000076a6      0x843 out/libs/sapi/src/sapi_board.o
- .debug_line    0x00007ee9      0x7e3 out/libs/sapi/src/sapi_datatypes.o
- .debug_line    0x000086cc      0x883 out/libs/sapi/src/sapi_delay.o
- .debug_line    0x00008f4f      0x8ef out/libs/sapi/src/sapi_gpio.o
- .debug_line    0x0000983e      0x845 out/libs/sapi/src/sapi_tick.o
- .debug_line    0x0000a083      0x9da out/libs/sapi/src/sapi_timer.o
- .debug_line    0x0000aa5d      0x982 out/libs/sapi/src/sapi_uart.o
+.debug_line     0x00000000     0xb404
+ .debug_line    0x00000000      0x975 out/app/src/Ascensor.o
+ .debug_line    0x00000975      0xa13 out/app/src/MEFAscensorPuertas.o
+ .debug_line    0x00001388      0xa1c out/app/src/MEF_tecladoMatricial.o
+ .debug_line    0x00001da4      0x9a9 out/app/src/Test.o
+ .debug_line    0x0000274d      0x9a4 out/app/src/driverDisplay.o
+ .debug_line    0x000030f1      0x6bd out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
+ .debug_line    0x000037ae      0xa93 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+ .debug_line    0x00004241      0x279 out/libs/lpc_chip_43xx/src/fpu_init.o
+ .debug_line    0x000044ba      0x6e5 out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
+ .debug_line    0x00004b9f      0x733 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
+ .debug_line    0x000052d2      0x95b out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+ .debug_line    0x00005c2d      0x977 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+ .debug_line    0x000065a4      0x830 out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+ .debug_line    0x00006dd4       0xe0 out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
+ .debug_line    0x00006eb4       0x47 out/libs/lpc_board_ciaa_edu_4337/src/crp.o
+ .debug_line    0x00006efb      0x7d0 out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
+ .debug_line    0x000076cb      0x843 out/libs/sapi/src/sapi_board.o
+ .debug_line    0x00007f0e      0x7e3 out/libs/sapi/src/sapi_datatypes.o
+ .debug_line    0x000086f1      0x883 out/libs/sapi/src/sapi_delay.o
+ .debug_line    0x00008f74      0x8ef out/libs/sapi/src/sapi_gpio.o
+ .debug_line    0x00009863      0x845 out/libs/sapi/src/sapi_tick.o
+ .debug_line    0x0000a0a8      0x9da out/libs/sapi/src/sapi_timer.o
+ .debug_line    0x0000aa82      0x982 out/libs/sapi/src/sapi_uart.o
 
-.debug_str      0x00000000    0x1c633
- .debug_str     0x00000000    0x198b1 out/app/src/Ascensor.o
-                              0x19bd9 (size before relaxing)
- .debug_str     0x000198b1      0x4c8 out/app/src/MEFAscensorPuertas.o
-                              0x19fb4 (size before relaxing)
- .debug_str     0x00019d79      0x15c out/app/src/MEF_tecladoMatricial.o
+.debug_str      0x00000000    0x1c6b4
+ .debug_str     0x00000000    0x19b44 out/app/src/Ascensor.o
+                              0x19e6c (size before relaxing)
+ .debug_str     0x00019b44      0x2b6 out/app/src/MEFAscensorPuertas.o
+                              0x1a027 (size before relaxing)
+ .debug_str     0x00019dfa      0x15c out/app/src/MEF_tecladoMatricial.o
                               0x19b38 (size before relaxing)
- .debug_str     0x00019ed5       0x65 out/app/src/Test.o
-                              0x19afd (size before relaxing)
- .debug_str     0x00019f3a      0x16a out/app/src/driverDisplay.o
+ .debug_str     0x00019f56       0x65 out/app/src/Test.o
+                              0x19d7b (size before relaxing)
+ .debug_str     0x00019fbb      0x16a out/app/src/driverDisplay.o
                               0x19b43 (size before relaxing)
- .debug_str     0x0001a0a4      0x3af out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
+ .debug_str     0x0001a125      0x3af out/libs/lpc_chip_43xx/src/chip_18xx_43xx.o
                               0x1561c (size before relaxing)
- .debug_str     0x0001a453      0x552 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
+ .debug_str     0x0001a4d4      0x552 out/libs/lpc_chip_43xx/src/clock_18xx_43xx.o
                               0x15ade (size before relaxing)
- .debug_str     0x0001a9a5       0xc5 out/libs/lpc_chip_43xx/src/fpu_init.o
+ .debug_str     0x0001aa26       0xc5 out/libs/lpc_chip_43xx/src/fpu_init.o
                                0x90d9 (size before relaxing)
- .debug_str     0x0001aa6a      0x14a out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
+ .debug_str     0x0001aaeb      0x14a out/libs/lpc_chip_43xx/src/gpio_18xx_43xx.o
                               0x1496a (size before relaxing)
- .debug_str     0x0001abb4       0xf7 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
+ .debug_str     0x0001ac35       0xf7 out/libs/lpc_chip_43xx/src/sysinit_18xx_43xx.o
                               0x1557a (size before relaxing)
- .debug_str     0x0001acab      0x463 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
+ .debug_str     0x0001ad2c      0x463 out/libs/lpc_chip_43xx/src/uart_18xx_43xx.o
                               0x1572c (size before relaxing)
- .debug_str     0x0001b10e      0x572 out/libs/lpc_board_ciaa_edu_4337/src/board.o
+ .debug_str     0x0001b18f      0x572 out/libs/lpc_board_ciaa_edu_4337/src/board.o
                               0x19c1e (size before relaxing)
- .debug_str     0x0001b680       0xdf out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
+ .debug_str     0x0001b701       0xdf out/libs/lpc_board_ciaa_edu_4337/src/board_sysinit.o
                               0x197c8 (size before relaxing)
- .debug_str     0x0001b75f      0x20c out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
+ .debug_str     0x0001b7e0      0x20c out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
                                0x2770 (size before relaxing)
- .debug_str     0x0001b96b       0x46 out/libs/lpc_board_ciaa_edu_4337/src/crp.o
+ .debug_str     0x0001b9ec       0x46 out/libs/lpc_board_ciaa_edu_4337/src/crp.o
                                0x2586 (size before relaxing)
- .debug_str     0x0001b9b1       0x35 out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
+ .debug_str     0x0001ba32       0x35 out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
                               0x189ef (size before relaxing)
- .debug_str     0x0001b9e6       0x1b out/libs/sapi/src/sapi_board.o
+ .debug_str     0x0001ba67       0x1b out/libs/sapi/src/sapi_board.o
                               0x18c24 (size before relaxing)
- .debug_str     0x0001ba01       0x30 out/libs/sapi/src/sapi_datatypes.o
+ .debug_str     0x0001ba82       0x30 out/libs/sapi/src/sapi_datatypes.o
                               0x18a27 (size before relaxing)
- .debug_str     0x0001ba31       0x88 out/libs/sapi/src/sapi_delay.o
+ .debug_str     0x0001bab2       0x88 out/libs/sapi/src/sapi_delay.o
                               0x18b28 (size before relaxing)
- .debug_str     0x0001bab9       0xf5 out/libs/sapi/src/sapi_gpio.o
+ .debug_str     0x0001bb3a       0xf5 out/libs/sapi/src/sapi_gpio.o
                               0x19811 (size before relaxing)
- .debug_str     0x0001bbae      0x457 out/libs/sapi/src/sapi_tick.o
+ .debug_str     0x0001bc2f      0x457 out/libs/sapi/src/sapi_tick.o
                               0x19913 (size before relaxing)
- .debug_str     0x0001c005      0x3fd out/libs/sapi/src/sapi_timer.o
+ .debug_str     0x0001c086      0x3fd out/libs/sapi/src/sapi_timer.o
                               0x19c5b (size before relaxing)
- .debug_str     0x0001c402      0x231 out/libs/sapi/src/sapi_uart.o
+ .debug_str     0x0001c483      0x231 out/libs/sapi/src/sapi_uart.o
                               0x18eec (size before relaxing)
 
 .comment        0x00000000       0x7f
@@ -11357,7 +11361,7 @@ BusFault_Handler                                  out/libs/lpc_board_ciaa_edu_43
 CAN0_IRQHandler                                   out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
 CAN1_IRQHandler                                   out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
 CRP_WORD                                          out/libs/lpc_board_ciaa_edu_4337/src/crp.o
-CargaUnNuevoPiso                                  out/app/src/MEFAscensorPuertas.o
+CargaNuevoPiso                                    out/app/src/MEFAscensorPuertas.o
 Chip_ADC_DeInit                                   out/libs/lpc_chip_43xx/src/adc_18xx_43xx.o
                                                   out/libs/sapi/src/sapi_adc.o
 Chip_ADC_EnableChannel                            out/libs/lpc_chip_43xx/src/adc_18xx_43xx.o
@@ -11909,6 +11913,7 @@ adcRead                                           out/libs/sapi/src/sapi_adc.o
 almacenarPisos                                    out/app/src/MEF_tecladoMatricial.o
                                                   out/app/src/Test.o
                                                   out/app/src/MEFAscensorPuertas.o
+                                                  out/app/src/Ascensor.o
 boardConfig                                       out/libs/sapi/src/sapi_board.o
                                                   out/app/src/Ascensor.o
 bss_init                                          out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
@@ -11945,6 +11950,7 @@ estadoActualAsc                                   out/app/src/MEFAscensorPuertas
 estadoActualPuerta                                out/app/src/MEFAscensorPuertas.o
                                                   out/app/src/Test.o
 flag1DW                                           out/app/src/MEFAscensorPuertas.o
+                                                  out/app/src/Test.o
 fpuInit                                           out/libs/lpc_chip_43xx/src/fpu_init.o
                                                   out/libs/lpc_board_ciaa_edu_4337/src/sysinit.o
 g_pfnVectors                                      out/libs/lpc_board_ciaa_edu_4337/src/cr_startup_lpc43xx.o
@@ -11988,9 +11994,9 @@ i2cWrite                                          out/libs/sapi/src/sapi_i2c.o
 indice                                            out/app/src/MEF_tecladoMatricial.o
                                                   out/app/src/Test.o
                                                   out/app/src/MEFAscensorPuertas.o
+                                                  out/app/src/Ascensor.o
 indiceTeclaGuardar                                out/app/src/MEF_tecladoMatricial.o
 indiceTeclaPresionada                             out/app/src/MEF_tecladoMatricial.o
-                                                  out/app/src/Test.o
 ingresarDigito                                    out/app/src/MEF_tecladoMatricial.o
 initDynMem                                        out/libs/lpc_chip_43xx/src/emc_18xx_43xx.o
 initStaticMem                                     out/libs/lpc_chip_43xx/src/emc_18xx_43xx.o
@@ -12010,7 +12016,6 @@ numeroEnString                                    out/app/src/Test.o
 numeroadisplayB                                   out/app/src/driverDisplay.o
 pasos                                             out/app/src/Test.o
 pideConfiguracion                                 out/app/src/MEFAscensorPuertas.o
-pideNuevoPiso                                     out/app/src/MEFAscensorPuertas.o
 pinesColumna                                      out/app/src/MEF_tecladoMatricial.o
 pinesFila                                         out/app/src/MEF_tecladoMatricial.o
 pisoActual                                        out/app/src/MEFAscensorPuertas.o
@@ -12019,7 +12024,6 @@ pisoActual                                        out/app/src/MEFAscensorPuertas
 pisoDestino                                       out/app/src/MEFAscensorPuertas.o
                                                   out/app/src/Test.o
 primerDigito                                      out/app/src/MEF_tecladoMatricial.o
-                                                  out/app/src/Test.o
 pwmConfig                                         out/libs/sapi/src/sapi_pwm.o
 pwmIsAttached                                     out/libs/sapi/src/sapi_pwm.o
 pwmRead                                           out/libs/sapi/src/sapi_pwm.o
@@ -12034,7 +12038,6 @@ sAPI_NullFuncPtr                                  out/libs/sapi/src/sapi_datatyp
 secuenciaB                                        out/app/src/driverDisplay.o
 segmentosdisplayB                                 out/app/src/driverDisplay.o
 segundoDigito                                     out/app/src/MEF_tecladoMatricial.o
-                                                  out/app/src/Test.o
 servoConfig                                       out/libs/sapi/src/sapi_servo.o
 servoIsAttached                                   out/libs/sapi/src/sapi_servo.o
 servoRead                                         out/libs/sapi/src/sapi_servo.o

@@ -43,9 +43,7 @@
 
 
 /*==================[definiciones y macros]==================================*/
-#define setbit32(var, bit)               ((var) |=  (uint32_t)((uint32_t)1<<(uint32_t)(bit)))
-#define clrbit32(var, bit)             ((var) &= ~(uint32_t)((uint32_t)1<<(uint32_t)(bit)))
-#define querybit32(var, bit)             ((bool_t)((var)>>(uint32_t)(bit)) & ((uint32_t)1))
+
 
 
 #define LED_ASCMOVIENDO		LEDB	// Indica ascensor moviendose.
@@ -74,7 +72,6 @@
 
 /*==================[definiciones de datos globales]=========================*/
 //SACAR ESTAS VARIABLES
-int8_t pideNuevoPiso = 0;
 int8_t pideConfiguracion = 0;
 
 
@@ -109,21 +106,12 @@ volatile uint32_t flag1DW = 0;
 // Bit 1  En 1 indica el pedido de ejecucion de la secuencia de apertura de puertas.
 // Bit 2  En 1 indica el pedido de ejecucion de la secuencia de cierre de puertas.
 // Bit 3  En 1 ya se solicito apertura de las puertas en PB.
+// Bit 4  En 1 se esta pidiendo un nuevo piso, lo cual lo informa "CargaNuevoPiso".
+
 
 
 // Bit 31
-#define Set_AscParadoFlag	setbit32(flag1DW, 0)
-#define Clr_AscParadoFlag	clrbit32(flag1DW, 0)
-#define Ask_AscParadoFlag	querybit32(flag1DW, 0)
-#define Set_AbrePuertasFlag	setbit32(flag1DW, 1)
-#define Clr_AbrePuertasFlag	clrbit32(flag1DW, 1)
-#define Ask_AbrePuertasFlag	querybit32(flag1DW, 1)
-#define Set_CierraPuertasFlag	setbit32(flag1DW, 2)
-#define Clr_CierraPuertasFlag	clrbit32(flag1DW, 2)
-#define Ask_CierraPuertasFlag	querybit32(flag1DW, 2)
-#define Set_PidioAperturaFlag	setbit32(flag1DW, 3)
-#define Clr_PidioAperturaFlag	clrbit32(flag1DW, 3)
-#define Ask_PidioAperturaFlag	querybit32(flag1DW, 3)
+
 
 
 // Variable para manejo parpadeo led alarma.
@@ -227,13 +215,13 @@ void CargaNuevoPiso(void)
 uint8_t i ;
 
 // Si indice es distinto de cero significa que hay algun piso cargado en el buffer.
-if (indice)
+if (indice && !Ask_PideNuevoPisoFlag)
 	{
 	// Si el piso actual es distinto del piso destino, se lo fija como nuevo, si no solo se desplaza el buffer.
 	if (pisoActual != almacenarPisos[0])
 		{
 		pisoDestino = almacenarPisos[0];
-		pideNuevoPiso = 1;
+		Set_PideNuevoPisoFlag;
 		}
 	indice--;
 	for (i=0; i<9; i++)
@@ -266,10 +254,10 @@ switch(estadoActualAsc)
 			Set_PidioAperturaFlag;
 			Set_AbrePuertasFlag;
 			}
-
+		// Consulta si hay algun piso pendiente en el buffer, si es asi lo obtiene.
 		CargaNuevoPiso();
 		
-		if (pideNuevoPiso)
+		if (Ask_PideNuevoPisoFlag)
 			{
 			if (estadoActualPuerta == PUERTA_ABIERTA)
 				Set_CierraPuertasFlag;			// Pide cerrar puertas.
@@ -319,6 +307,7 @@ switch(estadoActualAsc)
 					{
 					// CAMBIO DE ESTADO:
 					estadoActualAsc = PARADO;
+					Clr_PideNuevoPisoFlag;
 					gpioWrite (LED_ASCMOVIENDO, 0);
 					gpioWrite (LED_PBDETENIDO, 1);
 					}
@@ -343,6 +332,7 @@ switch(estadoActualAsc)
 					{
 					// CAMBIO DE ESTADO:
 					estadoActualAsc = PARADO;
+					Clr_PideNuevoPisoFlag;
 					gpioWrite (LED_ASCMOVIENDO, 0);
 					gpioWrite (LED_PBDETENIDO, 1);
 					}
@@ -365,10 +355,10 @@ switch(estadoActualAsc)
 			
 		else if (estadoActualPuerta == PUERTA_CERRADA)
 			{
-			
+			// Consulta si hay algun piso pendiente en el buffer, si es asi lo obtiene.
 			CargaNuevoPiso();
 			
-			if (pideNuevoPiso)
+			if (Ask_PideNuevoPisoFlag)
 				{
 				Clr_AscParadoFlag;
 				if (pisoActual < pisoDestino) //COMPLETAR!!! no tendria que venir el mismo piso...
@@ -388,7 +378,7 @@ switch(estadoActualAsc)
 			
 			//VER!!! si esta en plata baja!
 			// Se consulta si hay que ir a PB por tiempo.
-			if (delayRead(&timRetornoPB))
+			else if (delayRead(&timRetornoPB))
 				{
 				Clr_AscParadoFlag;
 				estadoActualAsc = YENDO_A_PLANTA_BAJA;
@@ -396,15 +386,16 @@ switch(estadoActualAsc)
 				gpioWrite (LED_PBDETENIDO, 0);
 				gpioWrite (LED_ASCMOVIENDO, 1);
 				
-				pideNuevoPiso = 0;			// SACAR!!!
+				Clr_PideNuevoPisoFlag;			// SACAR!!!
 				}
 			}
 		break;
 
 	case YENDO_A_PLANTA_BAJA:
+		// Consulta si hay algun piso pendiente en el buffer, si es asi lo obtiene.
 		CargaNuevoPiso();
 			
-		if (pideNuevoPiso)	
+		if (Ask_PideNuevoPisoFlag)	
 			{
 			if (pisoActual < pisoDestino)
 				{
@@ -568,6 +559,7 @@ switch(estadoActualPuerta)
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
+
 
 
 

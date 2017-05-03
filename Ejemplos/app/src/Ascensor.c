@@ -71,6 +71,9 @@ delay_t timSerial;
 
 extern int8_t pideNuevoPiso;
 extern int8_t pisoDestino;
+extern int almacenarPisos[10];
+extern int indice;
+
 
 /*==================[declaraciones de funciones externas]====================*/
 extern void EstadoInterno(void);
@@ -126,7 +129,9 @@ InicializarMEFPuerta();
 
 // UART_USB a 115200 baudios.
 uartConfig( UART_USB, 115200 );
-delayConfig(&timSerial, 200);   
+delayConfig(&timSerial, 100);   
+
+
 
 
 // ---------- REPETIR POR SIEMPRE --------------------------
@@ -152,6 +157,17 @@ if (delayRead(&timSerial))
 		{
 //		pideNuevoPiso = 1;
 //		pisoDestino = 5;
+		almacenarPisos[0] = 3;
+		almacenarPisos[1] = 6;
+		almacenarPisos[2] = 9;
+		almacenarPisos[3] = 12;
+		almacenarPisos[4] = 15;
+		almacenarPisos[5] = 19;
+		almacenarPisos[6] = 4;
+		almacenarPisos[7] = 10;
+		almacenarPisos[8] = 20;
+		almacenarPisos[9] = 7;
+		indice = 10;
 		}
 	}
 

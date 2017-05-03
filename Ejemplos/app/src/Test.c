@@ -43,9 +43,7 @@
 #include "MEFAscensorPuertas.h"	// <= Biblioteca MEF ascensor
 
 /*==================[definiciones y macros]==================================*/
-#define setbit32(var, bit)               ((var) |=  (uint32_t)((uint32_t)1<<(uint32_t)(bit)))
-#define clrbit32(var, bit)             ((var) &= ~(uint32_t)((uint32_t)1<<(uint32_t)(bit)))
-#define querybit32(var, bit)             ((bool_t)((var)>>(uint32_t)(bit)) & ((uint32_t)1))
+
 
 
 /*==================[definiciones de datos internos]=========================*/
@@ -68,7 +66,7 @@ char* itoa(int value, char* result, int base);
 
 
 /*==================[declaraciones de datos externos]=========================*/
-extern int8_t pideNuevoPiso;
+extern volatile uint32_t flag1DW;
 extern int8_t pisoActual;
 extern int8_t pisoDestino;
 extern estadoMEFASC_t estadoActualAsc;
@@ -144,6 +142,8 @@ uartWriteString( UART_USB, "\r\n" );
 //*********************************************************************************************************************
 void EstadoInterno(void)
 {
+// Esta linea permite el borrado de la terminal en la PC usando RealTerm.
+uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 
 
 uartWriteMiDato("almacenarPisos[0] = ", almacenarPisos[0], 10);
@@ -158,17 +158,20 @@ uartWriteMiDato("almacenarPisos[8] = ", almacenarPisos[8], 10);
 uartWriteMiDato("almacenarPisos[9] = ", almacenarPisos[9], 10);
 
 
-uartWriteMiDato("Bandera Pasos = ", pasos, 10);
+// uartWriteMiDato("Bandera Pasos = ", pasos, 10);
 
-uartWriteMiDato("IndiceTeclaPresionada = ", indiceTeclaPresionada, 10);
+// uartWriteMiDato("IndiceTeclaPresionada = ", indiceTeclaPresionada, 10);
 
-uartWriteMiDato("PrimerDigito = ", primerDigito, 10);
+// uartWriteMiDato("PrimerDigito = ", primerDigito, 10);
 
-uartWriteMiDato("SegundoDigito = ", segundoDigito, 10);
+// uartWriteMiDato("SegundoDigito = ", segundoDigito, 10);
 
 uartWriteMiDato("Indice = ", indice, 10);
 
 
+if (Ask_PideNuevoPisoFlag)
+	uartWriteMiDato("pideNuevoPiso = ", 1, 10);
+else	uartWriteMiDato("pideNuevoPiso = ", 0, 10);
 
 uartWriteMiDato ("Piso Destino = ", pisoDestino, 10);
 

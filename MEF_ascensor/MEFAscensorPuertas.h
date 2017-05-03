@@ -43,6 +43,28 @@
 
 
 /*==================[macros]=================================================*/
+#define setbit32(var, bit)               ((var) |=  (uint32_t)((uint32_t)1<<(uint32_t)(bit)))
+#define clrbit32(var, bit)             ((var) &= ~(uint32_t)((uint32_t)1<<(uint32_t)(bit)))
+#define querybit32(var, bit)             ((bool_t)((var)>>(uint32_t)(bit)) & ((uint32_t)1))
+
+
+
+#define Set_AscParadoFlag	setbit32(flag1DW, 0)
+#define Clr_AscParadoFlag	clrbit32(flag1DW, 0)
+#define Ask_AscParadoFlag	querybit32(flag1DW, 0)
+#define Set_AbrePuertasFlag	setbit32(flag1DW, 1)
+#define Clr_AbrePuertasFlag	clrbit32(flag1DW, 1)
+#define Ask_AbrePuertasFlag	querybit32(flag1DW, 1)
+#define Set_CierraPuertasFlag	setbit32(flag1DW, 2)
+#define Clr_CierraPuertasFlag	clrbit32(flag1DW, 2)
+#define Ask_CierraPuertasFlag	querybit32(flag1DW, 2)
+#define Set_PidioAperturaFlag	setbit32(flag1DW, 3)
+#define Clr_PidioAperturaFlag	clrbit32(flag1DW, 3)
+#define Ask_PidioAperturaFlag	querybit32(flag1DW, 3)
+#define Set_PideNuevoPisoFlag	setbit32(flag1DW, 4)
+#define Clr_PideNuevoPisoFlag	clrbit32(flag1DW, 4)
+#define Ask_PideNuevoPisoFlag	querybit32(flag1DW, 4)
+
 
 
 
