@@ -10,17 +10,13 @@
 /*==================[inclusiones]============================================*/
 
 
-
-
-
-
+void inicializarMEF_tecladoMatrical(void)
+void actualizarMEF_tecladoMatricial (void);
 
 void cancelar (void);
-void configurarTeclado(void);
+void configurarTecladoMatricial(void);
 void guardarPisoSimple(int primerDigito);
 void guardarPisoDoble (int primerDigito, int segundoDigito);
-
-void actualizarMEF_tecladoMatricial (void);
 
 bool_t ingresarDigito(void);
 

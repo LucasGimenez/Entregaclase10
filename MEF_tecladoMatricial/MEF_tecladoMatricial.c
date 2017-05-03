@@ -11,12 +11,16 @@
 
 /*==================[definiciones y macros]==================================*/
 
+typedef enum{
+    EN_ESPERA_DE_DIGITO_1,
+	EN_ESPERA_DE_DIGITO_2,
+	EN_ESPERA_DE_LETRA,
+	GUARDAR_PISO
+	
+} mefTecladoMatricial_t;
+
 /*==================[definiciones de datos internos]=========================*/
-// SACAR PARA PRUEBAS...
-extern uint32_t pasos;
-
 /*==================[definiciones de datos externos]=========================*/
-
 
 uint16_t primerDigito  = 0; // Variable para almacenar el primer digito ingresado.
 uint16_t segundoDigito = 0; // Variable para almacenar el segundo digito ingresado.
@@ -27,9 +31,11 @@ uint32_t indiceTeclaGuardar = 0;    // Variable que me permite conocer que digit
 
 
 int almacenarPisos [10];    // Vector para almacenar hasta 10 pisos ingresados correctamente.
-int indice = 0;                  // Indice para recorrer el vector anterior.
+int indice = 0;             // Indice para recorrer el vector anterior.
 
 extern bool_t flagConfiguracion;
+
+mefTecladoMatricial_t estadoMefTecladoMatricial;
 
 /* Vector para almacenar los pines que van a estar conectados a las filas del teclado matricial. */
 uint8_t pinesFila[4] = {
@@ -58,47 +64,73 @@ static uint16_t pinesTeclado[16] = {
 /*==================[declaraciones de funciones internas]====================*/
 
 
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-void actualizarMEF_tecladoMatricial (void) { 
+void inicializarMEF_tecladoMatrical(void) {
 
-       if (ingresarDigito()) {
-	
-            delay(500);
-            
-            switch (indiceTeclaGuardar){
-                
-                case 0:  if (pinesTeclado[segundoDigito] == 'A') {
-                                guardarPisoSimple (primerDigito);
-				
-                            }
-                            else if (pinesTeclado[confirmar] == 'B') {
-                                cancelar();
-                            }
-                        break;
-                            
-                case 1:   if (pinesTeclado[confirmar] == 'A' ) {
-                                guardarPisoDoble (primerDigito, segundoDigito);
-                            }
-                
-                            else if (pinesTeclado[confirmar] == 'B') {
-                                cancelar();
-                            }
-                        break;
-            }
-        }
+		estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
+		configurarTecladoMatricial();
 }
-//*********************************************************************************************************************
-//*********************************************************************************************************************
 
+void actualizarMEF_tecladoMatricial (void) { 
+	
+static delay_t delayAntirebote;
+	
+	switch (estadoMefTecladoMatricial) {
+	
+		case EN_ESPERA_DE_DIGITO_1:
+			if( ingresarDigito() ) {
+				if ( indiceTeclaGuardar == 0 ) {
+					estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_2;
+					delayConfig(&delayAntirebote, 40);
+				}
+			}
+		break;
+			
+		case EN_ESPERA_DE_DIGITO_2:
+			if (delayRead (&delayAntirebote) ) {
+				if( ingresarDigito() ) {
 
+					if (indiceTeclaGuardar == 1) {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
+						delayConfig(&delayAntirebote, 40);
+						indiceTeclaGuardar == 0;
+						}
 
+					if (pinesTeclado[segundoDigito] == 'A') {
+						estadoMefTecladoMatricial = GUARDAR_PISO;
+						guardarPisoSimple (primerDigito);
 
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-void configurarTeclado (void){
+					}
+					else if (pinesTeclado[confirmar] == 'B') {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
+						cancelar();
+					}
+				}
+			}
+			break;
+	
+		case EN_ESPERA_DE_LETRA:
+			if (delayRead (&delayAntirebote) ) {
+				if ( ingresarDigito() ) {
+					if (pinesTeclado[confirmar] == 'A' ) {
+						estadoMefTecladoMatricial = GUARDAR_PISO;
+						guardarPisoDoble (primerDigito, segundoDigito);
+					}
+
+					else if (pinesTeclado[confirmar] == 'B') {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
+						cancelar();
+					}
+				}
+			}
+			break;
+	
+		default:	
+			inicializarTecladoMatrical();
+		break;
+	}		
+}
+
+void configurarTecladoMatricial (void){
     
     uint8_t i = 0;  // Variable para recorrer el vector de filas y columnas.
     
@@ -112,15 +144,7 @@ void configurarTeclado (void){
         gpioConfig(pinesColumna[i], GPIO_INPUT_PULLUP);
     }
 }
-//*********************************************************************************************************************
-//*********************************************************************************************************************
 
-
-
-
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
 bool_t ingresarDigito (void){
     
     bool_t ret = FALSE;
@@ -203,15 +227,7 @@ bool_t ingresarDigito (void){
     
     return ret;
 }
-//*********************************************************************************************************************
-//*********************************************************************************************************************
 
-
-
-
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
 void guardarPisoSimple (int primerDigito) {
 /*======= Funcion que almacena el piso ingresado, de un solo digito, en el vector =======*/
 if (indice < 10) {
@@ -230,24 +246,16 @@ if (indice < 10) {
 /*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
 primerDigito  = 0;
 segundoDigito = 0;
-indiceTeclaGuardar = 0;
+indiceTeclaGuardar = 0;void actualizarMEF_tecladoMatricial (void);
 }
-//*********************************************************************************************************************
-//*********************************************************************************************************************
 
-
-
-
-//*********************************************************************************************************************
-//*********************************************************************************************************************
-void guardarPisoDoble (int primerDigito, int segundoDigito)
-{
-    
-
-if (indice < 10){
+void guardarPisoDoble (int primerDigito, int segundoDigito) {
+	
 /*======= Funcion que almacena el piso ingresado, de dos digitos, en el vector =======*/
-	int carga = 0;
-    
+	
+int carga = 0;
+	
+if (indice < 10){
 /*======= Etapa de guardar un subsuelo (numero negativo) en el vector de almacenamiento =======*/
     if (pinesTeclado[primerDigito] == '#' && pinesTeclado[segundoDigito] <= 5) {
         carga = segundoDigito - (2 * segundoDigito);
@@ -277,36 +285,23 @@ if (indice < 10){
 }
     
 /*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
-    
-primerDigito  = 0;
-segundoDigito = 0;
+primerDigito  = 0xFF;
+segundoDigito = 0xFF;
 indiceTeclaGuardar = 0;
 
 }
-//*********************************************************************************************************************
-//*********************************************************************************************************************
 
-
-
-
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-void cancelar (void){
+void cancelar (void) {
     
 
-uint16_t primerDigito  = 0; 
-uint16_t segundoDigito = 0; 
-uint16_t confirmar = 0;     
+uint16_t primerDigito  = 0xFF; 
+uint16_t segundoDigito = 0xFF; 
+uint16_t confirmar = 0xFF;     
 
 uint32_t indiceTeclaPresionada = 0; 
 uint32_t indiceTeclaGuardar = 0;
     
 }
-//*********************************************************************************************************************
-//*********************************************************************************************************************
-
-
 
 /*==================[declaraciones de funciones externas]====================*/
 
