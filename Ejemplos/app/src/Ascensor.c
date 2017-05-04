@@ -116,7 +116,8 @@ tickConfig (5, IntTimer);
 ConfigDisplay(); // Configuración de pines para el display 7 segmentos
 
 
-configurarTeclado(); // Configurar teclado matricial
+//configurarTeclado(); // Configurar teclado matricial
+inicializarMEF_tecladoMatrical();
 
 
 // Se inicializa la MEF que maneja el ascensor.
@@ -129,7 +130,7 @@ InicializarMEFPuerta();
 
 // UART_USB a 115200 baudios.
 uartConfig( UART_USB, 115200 );
-delayConfig(&timSerial, 100);   
+delayConfig(&timSerial, 200);   
 
 
 
@@ -140,6 +141,7 @@ while(TRUE)
 
 // Función Actualizar MEF del Teclado.
 actualizarMEF_tecladoMatricial();
+
 
 // Función Actualizar MEF del Ascensor.
 ActualizarMEFAsc();
@@ -157,16 +159,16 @@ if (delayRead(&timSerial))
 		{
 //		pideNuevoPiso = 1;
 //		pisoDestino = 5;
-		almacenarPisos[0] = 3;
-		almacenarPisos[1] = 6;
-		almacenarPisos[2] = 9;
-		almacenarPisos[3] = 12;
-		almacenarPisos[4] = 15;
-		almacenarPisos[5] = 19;
-		almacenarPisos[6] = 4;
-		almacenarPisos[7] = 10;
-		almacenarPisos[8] = 20;
-		almacenarPisos[9] = 7;
+		almacenarPisos[0] = 6;
+		almacenarPisos[1] = 9;
+		almacenarPisos[2] = 12;
+		almacenarPisos[3] = 17;
+		almacenarPisos[4] = 20;
+		almacenarPisos[5] = 10;
+		almacenarPisos[6] = -5;
+		almacenarPisos[7] = 5;
+		almacenarPisos[8] = -3;
+		almacenarPisos[9] = 8;
 		indice = 10;
 		}
 	}

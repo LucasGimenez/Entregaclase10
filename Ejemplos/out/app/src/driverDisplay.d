@@ -65,4 +65,5 @@ out/app/src/driverDisplay.o: app/src/driverDisplay.c libs/sapi/inc/sapi.h \
  libs/sapi/inc/sapi_rtc.h libs/sapi/inc/sapi_sleep.h \
  libs/sapi/inc/sapi_7_segment_display.h libs/sapi/inc/sapi_keypad.h \
  libs/sapi/inc/sapi_pwm.h libs/sapi/inc/sapi_servo.h \
- libs/sapi/inc/sapi_hmc5883l.h app/inc/driverDisplay.h
+ libs/sapi/inc/sapi_hmc5883l.h app/inc/MEFAscensorPuertas.h \
+ app/inc/driverDisplay.h

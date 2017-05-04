@@ -75,7 +75,7 @@
 int8_t pideConfiguracion = 0;
 
 
-
+bool_t flagConfiguracion = 0;
 
 // Variable que inidca el estado del ascensor (global)
 estadoMEFASC_t estadoActualAsc;
