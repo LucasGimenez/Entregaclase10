@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -42,10 +42,18 @@
 /*==================[inclusiones]============================================*/
 
 
+/*==================[macros]=================================================*/
 
+
+
+/*==================[typedef]================================================*/
+
+
+
+
+/*==================[declaraciones de funciones]====================*/
 // Configuracion de los display de 7 segmentos.
 void ConfigDisplay(void);
-
 
 // Actualiza display con el piso actual.
 void ActualizarDisplay(void);

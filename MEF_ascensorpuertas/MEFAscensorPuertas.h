@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -48,7 +48,13 @@
 #define querybit32(var, bit)             ((bool_t)((var)>>(uint32_t)(bit)) & ((uint32_t)1))
 
 
-
+//volatile uint32_t flag1DW = 0;
+// Bit 0  Indica en 1 que se ejecuto el bloque de ejecucion unica del estado PARADO del ascensor.
+// Bit 1  En 1 indica el pedido de ejecucion de la secuencia de apertura de puertas.
+// Bit 2  En 1 indica el pedido de ejecucion de la secuencia de cierre de puertas.
+// Bit 3  En 1 ya se solicito apertura de las puertas en PB.
+// Bit 4  En 1 se esta pidiendo un nuevo piso, lo cual lo informa "CargaNuevoPiso".
+// Bit 31
 #define Set_AscParadoFlag	setbit32(flag1DW, 0)
 #define Clr_AscParadoFlag	clrbit32(flag1DW, 0)
 #define Ask_AscParadoFlag	querybit32(flag1DW, 0)
@@ -90,17 +96,16 @@ typedef enum{
 
 
 
-/*==================[external data declaration]==============================*/
 
 
 
-/*==================[external functions declaration]=========================*/
+
+/*==================[declaraciones de funciones]====================*/
 
 void InicializarMEFAsc(void);
 void ActualizarMEFAsc(void);
 void InicializarMEFPuerta(void);
 void ActualizaMEFPuerta(void);
-
 
 
 

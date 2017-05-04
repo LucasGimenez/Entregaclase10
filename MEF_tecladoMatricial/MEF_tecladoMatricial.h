@@ -1,6 +1,6 @@
 /*============================================================================
  * Licencia: 
- * Autor:   Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Autor:   Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * Fecha:   21/04/2017
  *===========================================================================*/
 
@@ -9,15 +9,20 @@
 
 /*==================[inclusiones]============================================*/
 
-void inicializarMEF_tecladoMatrical(void);
-void actualizarMEF_tecladoMatricial (void);
 
-void cancelar (void);
-void configurarTecladoMatricial(void);
-void guardarPisoSimple(int primerDigito);
-void guardarPisoDoble (int primerDigito, int segundoDigito);
 
-bool_t ingresarDigito(void);
+/*==================[macros]=================================================*/
+
+
+
+/*==================[typedef]================================================*/
+
+
+
+
+/*==================[declaraciones de funciones]====================*/
+void InicializarMEF_tecladoMatrical(void);
+void ActualizarMEF_tecladoMatricial (void);
 
 
 

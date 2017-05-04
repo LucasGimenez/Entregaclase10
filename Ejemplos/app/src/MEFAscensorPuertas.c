@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -65,17 +65,44 @@
 
 
 /*==================[definiciones de datos internos]=========================*/
+static int8_t pideConfiguracion = 0;
 
+// Velocidad del ascensor 1000 = 1seg. Puede cambiar por Configuracion externa
+static uint16_t velPisoPiso = 2000;
 
+// Velocidad de apertura y cierre de puerta 1000 = 1s.Puede cambiar por Configuracion externa
+static uint16_t velAbreCierraPuerta = 2000;
 
-/*==================[definiciones de datos externos]=========================*/
+// Indica el numero de pisos. Puede cambiar por Configuracion externa
+static uint8_t maximoDePisos =  20;
+
+// Indica el numero de subsuelos. Puede cambiar por Configuracion externa
+static uint8_t MaximoDeSubsuelos = 2;
+
+// Variable para manejo parpadeo led alarma.
+static delay_t timAlarPuerta;
+
+// Variable para manejo del tiempo de apertura/cierre de la puerta.
+static delay_t timAbreCierraPuerta;
+
+// Variable para manejo del tiempo que queda la puerta abierta.
+static delay_t timPuertaAbierta;
+
+// Variable para manejo del tiempo que tardada el ascensor en desplazarse de un piso a otro.
+static delay_t timPisoPiso;
+
+// Variable para manejo del tiempo que espera para retornar a la planta baja.
+static delay_t timRetornoPB;
+
 
 /*==================[definiciones de datos globales]=========================*/
-//SACAR ESTAS VARIABLES
-int8_t pideConfiguracion = 0;
-
-
-bool_t flagConfiguracion = 0;
+volatile uint32_t flag1DW = 0;
+// Bit 0  Indica en 1 que se ejecuto el bloque de ejecucion unica del estado PARADO del ascensor.
+// Bit 1  En 1 indica el pedido de ejecucion de la secuencia de apertura de puertas.
+// Bit 2  En 1 indica el pedido de ejecucion de la secuencia de cierre de puertas.
+// Bit 3  En 1 ya se solicito apertura de las puertas en PB.
+// Bit 4  En 1 se esta pidiendo un nuevo piso, lo cual lo informa "CargaNuevoPiso".
+// Bit 31
 
 // Variable que inidca el estado del ascensor (global)
 estadoMEFASC_t estadoActualAsc;
@@ -89,42 +116,8 @@ int8_t pisoActual = 0;
 // Variable que indica el piso destino del ascensor.
 int8_t pisoDestino = 0;
 
-// Velocidad del ascensor 1000 = 1seg. Puede cambiar por Configuracion externa
-uint16_t velPisoPiso = 2000;
 
-// Velocidad de apertura y cierre de puerta 1000 = 1s.Puede cambiar por Configuracion externa
-uint16_t velAbreCierraPuerta = 2000;
-
-// Indica el numero de pisos. Puede cambiar por Configuracion externa
-uint8_t maximoDePisos =  20;
-
-// Indica el numero de subsuelos. Puede cambiar por Configuracion externa
-uint8_t MaximoDeSubsuelos = 2;
-
-volatile uint32_t flag1DW = 0;
-// Bit 0  Indica en 1 que se ejecuto el bloque de ejecucion unica del estado PARADO del ascensor.
-// Bit 1  En 1 indica el pedido de ejecucion de la secuencia de apertura de puertas.
-// Bit 2  En 1 indica el pedido de ejecucion de la secuencia de cierre de puertas.
-// Bit 3  En 1 ya se solicito apertura de las puertas en PB.
-// Bit 4  En 1 se esta pidiendo un nuevo piso, lo cual lo informa "CargaNuevoPiso".
-
-
-
-// Bit 31
-
-
-
-// Variable para manejo parpadeo led alarma.
-delay_t timAlarPuerta;
-// Variable para manejo del tiempo de apertura/cierre de la puerta.
-delay_t timAbreCierraPuerta;
-// Variable para manejo del tiempo que queda la puerta abierta.
-delay_t timPuertaAbierta;
-// Variable para manejo del tiempo que tardada el ascensor en desplazarse de un piso a otro.
-delay_t timPisoPiso;
-// Variable para manejo del tiempo que espera para retornar a la planta baja.
-delay_t timRetornoPB;
-
+bool_t flagConfiguracion = 0;
 
 
 
@@ -132,21 +125,19 @@ delay_t timRetornoPB;
 extern int almacenarPisos [10];		// Vector para almacenar hasta 10 pisos ingresados correctamente.
 extern int indice;				// Indice para recorrer el vector anterior.
 
+/*==================[declaraciones de funciones externas]====================*/
+
 
 
 
 
 /*==================[declaraciones de funciones internas]====================*/
-
-/*==================[declaraciones de funciones externas]====================*/
 // Prototipos de funciones
 void InicializarMEFAsc(void);
 void ActualizarMEFAsc(void);
 void InicializarMEFPuerta(void);
 void ActualizaMEFPuerta(void);
-
-
-
+void CargaNuevoPiso(void);
 
 
 

@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -44,6 +44,7 @@
 #include "driverDisplay.h"	// <= Biblioteca display 7 segmentos x 4 digitos
 
 /*==================[definiciones y macros]==================================*/
+#define ANODO_COMUN 1
 
 // Define los pines de los segmentos del display.
 #define segmento_a	GPIO0		// a
@@ -63,15 +64,16 @@
 #define LETRA_S 5
 #define LETRA_b 11
 #define LETRA_P 22
+#define SIGNONEG 25
 #define DIGITOAPAGADO 26
 
 
 /*==================[definiciones de datos internos]=========================*/
-uint8_t segmentosdisplayB[8] = {segmento_a, segmento_b, segmento_c, segmento_d, segmento_e, segmento_f, segmento_g, segmento_dp};
+static uint8_t segmentosdisplayB[8] = {segmento_a, segmento_b, segmento_c, segmento_d, segmento_e, segmento_f, segmento_g, segmento_dp};
 
-uint8_t quedisplayB[4] = {digito_u, digito_d, digito_c, digito_um};
+static uint8_t quedisplayB[4] = {digito_u, digito_d, digito_c, digito_um};
 
-uint8_t numeroadisplayB[27] = {
+static uint8_t numeroadisplayB[27] = {
    0b00111111, // 0
    0b00000110, // 1
    0b01011011, // 2
@@ -104,12 +106,16 @@ uint8_t numeroadisplayB[27] = {
    0b00000000  // display off
 };
 
-uint8_t secuenciaB = 0;
 
-uint8_t unidadesB = 0;
-uint8_t decenasB = 0;
-uint8_t centenasB = 0;
-uint8_t unidadesmilB = 0;
+static uint8_t secuenciaB = 0;
+
+static uint8_t unidadesB = 0;
+static uint8_t decenasB = 0;
+static uint8_t centenasB = 0;
+static uint8_t unidadesmilB = 0;
+
+/*==================[definiciones de datos globales]=========================*/
+
 
 
 
@@ -120,16 +126,25 @@ extern estadoMEFASC_t estadoActualAsc;
 
 
 
-
-/*==================[definiciones de datos externos]=========================*/
-
-/*==================[declaraciones de funciones internas]====================*/
-
 /*==================[declaraciones de funciones externas]====================*/
 
 
+
+
+
+/*==================[declaraciones de funciones internas]====================*/
+void ConfigDisplay(void);
+void SacaDigito(uint8_t numero, uint8_t lcdx);
+void ConvierteByte(uint8_t X, uint8_t *p);
+void ActualizarDisplay(void);
+
+
+
+
+
+
 //*************************************************************************************************
-//			Configura pines para los dígitos
+//			Configura pines para los dígitos Anodo Comun!
 //*************************************************************************************************
 void ConfigDisplay(void)
 {
@@ -139,16 +154,23 @@ uint8_t i = 0;
 for (i=0; i<8; i++)
 	{
 	gpioConfig (segmentosdisplayB[i], GPIO_OUTPUT);
+	#ifdef ANODO_COMUN
 	gpioWrite (segmentosdisplayB[i], 1);
+	#elif defined(CATODO_COMUN)
+	gpioWrite (segmentosdisplayB[i], 0);
+	#endif   	
 	}
 
 // Se setean los pines correspondientes al control de los anodos común de los dígitos, en salida y cero.
 for (i=0; i<4; i++)
 	{
 	gpioConfig (quedisplayB[i], GPIO_OUTPUT);
-	gpioWrite (quedisplayB[i], 1);
+	#ifdef ANODO_COMUN
+		gpioWrite (quedisplayB[i], 1);
+	#elif defined(CATODO_COMUN)
+		gpioWrite (quedisplayB[i], 0);
+	#endif   		
 	}
-	
 }
 //*************************************************************************************************
 //*************************************************************************************************
@@ -158,7 +180,7 @@ for (i=0; i<4; i++)
 
 
 //*********************************************************************************************************************
-//			Actualiza un dígito
+//			Actualiza un dígito Anodo Comun!
 //*********************************************************************************************************************
 void SacaDigito(uint8_t numero, uint8_t lcdx)
 {
@@ -171,7 +193,11 @@ gpioWrite (LCD4, 1);
 gpioWrite (lcdx, 0);
 
 for (i=0; i<=7; i++)
-	gpioWrite (segmentosdisplayB[i], !(numeroadisplayB[numero] & (1 << i)));
+	#ifdef ANODO_COMUN
+		gpioWrite (segmentosdisplayB[i], !(numeroadisplayB[numero] & (1 << i)));
+	#elif defined(CATODO_COMUN)
+		gpioWrite (segmentosdisplayB[i], (numeroadisplayB[numero] & (1 << i)));
+	#endif   	
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -204,6 +230,7 @@ else	{
 
 
 //*********************************************************************************************************************
+//			Funcion que se encarga de actualizar el display de 4 gigitos 7 segmentos
 //*********************************************************************************************************************
 void ActualizarDisplay(void)
 {
@@ -220,6 +247,7 @@ if (pisoActual == 0 && estadoActualAsc != SUBIENDO && estadoActualAsc != BAJANDO
 	}
 	
 else	{
+	// Se obtiene el numero de piso, no importa si es negativo.
 	ConvierteByte(abs(pisoActual), valores);
 	if (pisoActual == 0)
 		{
@@ -228,7 +256,7 @@ else	{
 		centenasB = DIGITOAPAGADO;
 		unidadesmilB = DIGITOAPAGADO;
 		}
-		
+	// El piso actual en el que se encuentra el ascensor esta arriba de PB?	
 	else if (pisoActual > 0)
 		{
 		if (!valores[1])
@@ -237,13 +265,13 @@ else	{
 		unidadesB = valores[0];
 		centenasB = DIGITOAPAGADO;
 		}
-	// El numero es negativo.
+	// El numero es negativo, subsuelos.
 	else	{
-		decenasB = 25;
+		decenasB = SIGNONEG;
 		unidadesB = valores[0];
 		centenasB = DIGITOAPAGADO;
 		}
-		
+	// Esta el ascensor en el estado yendo a planta baja?	
 	if (estadoActualAsc == YENDO_A_PLANTA_BAJA)
 		{
 		if (pisoActual > 0)
@@ -252,6 +280,7 @@ else	{
 			unidadesmilB = LETRA_S;
 		else	unidadesmilB = DIGITOAPAGADO;
 		}
+	// Se consulta si el ascensor esta parado, suniendo o bajando.
 	else if (estadoActualAsc == PARADO)
 		unidadesmilB = DIGITOAPAGADO;
 	else if (estadoActualAsc == SUBIENDO)
@@ -262,7 +291,8 @@ else	{
 	
 	
 
-switch (secuenciaB){
+switch (secuenciaB)
+	{
 	case 0:
 		SacaDigito (unidadesB, LCD1);
 		secuenciaB++;
@@ -282,7 +312,6 @@ switch (secuenciaB){
 		secuenciaB = 0;
 		break;
 	}
-	
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************

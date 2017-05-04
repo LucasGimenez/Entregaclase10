@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -44,8 +44,16 @@
 
 
 
+/*==================[macros]=================================================*/
 
 
+
+/*==================[typedef]================================================*/
+
+
+
+
+/*==================[declaraciones de funciones]====================*/
 
 
 

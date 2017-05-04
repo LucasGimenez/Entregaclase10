@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -45,13 +45,12 @@
 #include "MEFAscensorPuertas.h"	// <= Biblioteca MEF ascensor
 
 /*==================[definiciones y macros]==================================*/
-#define setbit32(var, bit)               ((var) |=  (uint32_t)((uint32_t)1<<(uint32_t)(bit)))
-#define clrbit32(var, bit)             ((var) &= ~(uint32_t)((uint32_t)1<<(uint32_t)(bit)))
-#define querybit32(var, bit)             ((bool_t)((var)>>(uint32_t)(bit)) & ((uint32_t)1))
+
 
 
 
 /*==================[definiciones de datos internos]=========================*/
+
 
 
 /*==================[definiciones de datos globales]=========================*/
@@ -59,16 +58,9 @@
 delay_t timSerial;
 
 
-/*==================[declaraciones de funciones internas]====================*/
-
-
-
-
-
 
 
 /*==================[declaraciones de datos externos]=========================*/
-
 extern int8_t pideNuevoPiso;
 extern int8_t pisoDestino;
 extern int almacenarPisos[10];
@@ -76,11 +68,23 @@ extern int indice;
 
 
 /*==================[declaraciones de funciones externas]====================*/
-extern void EstadoInterno(void);
-// extern void configurarTeclado(void);
-// extern void actualizarMEF_tecladoMatricial (void);
+extern void EnviaEstadoInterno(void);
 extern void ConfigDisplay(void);
 extern void ActualizarDisplay(void);
+extern void InicializarMEF_tecladoMatrical(void);
+extern void ActualizarMEF_tecladoMatricial (void);
+extern void InicializarMEFAsc(void);
+extern void InicializarMEFPuerta(void);
+extern void ActualizarMEFAsc(void);
+extern void ActualizaMEFPuerta(void);
+
+
+
+/*==================[declaraciones de funciones internas]====================*/
+bool_t IntTimer (void *ptr);
+
+
+
 
 
 
@@ -91,6 +95,8 @@ extern void ActualizarDisplay(void);
 bool_t IntTimer (void *ptr)
 {
 
+
+// Llama a la rutina que actualiza el display de 4 digitos de 7 segmentos.
 ActualizarDisplay();
 	
 
@@ -113,11 +119,11 @@ boardConfig();
 // Interupcion cada 5ms.
 tickConfig (5, IntTimer);
 
-ConfigDisplay(); // Configuración de pines para el display 7 segmentos
+// Configuración de pines para el display 7 segmentos
+ConfigDisplay();
 
-
-//configurarTeclado(); // Configurar teclado matricial
-inicializarMEF_tecladoMatrical();
+// Se inicializa la MEF que maneja el teclado matricial
+InicializarMEF_tecladoMatrical();
 
 
 // Se inicializa la MEF que maneja el ascensor.
@@ -140,7 +146,7 @@ while(TRUE)
 {      
 
 // Función Actualizar MEF del Teclado.
-actualizarMEF_tecladoMatricial();
+ActualizarMEF_tecladoMatricial();
 
 
 // Función Actualizar MEF del Ascensor.
@@ -151,14 +157,20 @@ ActualizarMEFAsc();
 ActualizaMEFPuerta();
 
 
+
+
+
+
+
+
+// Codigo de prueba, presionando la tecla 4 se cargan valores en las 10 posiciones del buffer de pisos
+// y de fija indice a 10.
 if (delayRead(&timSerial))
 	{
-	EstadoInterno();
+	EnviaEstadoInterno();
 	
 	if (!gpioRead(TEC4))
 		{
-//		pideNuevoPiso = 1;
-//		pisoDestino = 5;
 		almacenarPisos[0] = 6;
 		almacenarPisos[1] = 9;
 		almacenarPisos[2] = 12;
@@ -172,10 +184,6 @@ if (delayRead(&timSerial))
 		indice = 10;
 		}
 	}
-
-
-
-
 } 
 
 

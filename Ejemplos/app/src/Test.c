@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright 2017, Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -55,13 +55,6 @@ uint8_t numeroEnString[10];
 uint32_t pasos = 0;
 
 
-/*==================[declaraciones de funciones internas]====================*/
-// Prototipos de funciones
-// void EstadoInterno(void);
-char* itoa(int value, char* result, int base);
-
-
-
 
 
 
@@ -77,6 +70,23 @@ extern int indice;				// Indice para recorrer el vector anterior.
 extern uint16_t primerDigito; // Variable para almacenar el primer digito ingresado.
 extern uint16_t segundoDigito; // Variable para almacenar el segundo digito ingresado.
 extern uint32_t indiceTeclaPresionada;
+
+
+
+/*==================[declaraciones de funciones externas]====================*/
+
+
+
+
+/*==================[declaraciones de funciones internas]====================*/
+char* itoa(int value, char* result, int base);
+void uartWriteMiDato(char* str, int value, int base);
+void EnviaEstadoInterno(void);
+
+
+
+
+
 
 
 
@@ -140,22 +150,22 @@ uartWriteString( UART_USB, "\r\n" );
 //*********************************************************************************************************************
 //
 //*********************************************************************************************************************
-void EstadoInterno(void)
+void EnviaEstadoInterno(void)
 {
 // Esta linea permite el borrado de la terminal en la PC usando RealTerm.
 uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 
 
-uartWriteMiDato("almacenarPisos[0] = ", almacenarPisos[0], 10);
-uartWriteMiDato("almacenarPisos[1] = ", almacenarPisos[1], 10);
-uartWriteMiDato("almacenarPisos[2] = ", almacenarPisos[2], 10);
-uartWriteMiDato("almacenarPisos[3] = ", almacenarPisos[3], 10);
-uartWriteMiDato("almacenarPisos[4] = ", almacenarPisos[4], 10);
-uartWriteMiDato("almacenarPisos[5] = ", almacenarPisos[5], 10);
-uartWriteMiDato("almacenarPisos[6] = ", almacenarPisos[6], 10);
-uartWriteMiDato("almacenarPisos[7] = ", almacenarPisos[7], 10);
-uartWriteMiDato("almacenarPisos[8] = ", almacenarPisos[8], 10);
-uartWriteMiDato("almacenarPisos[9] = ", almacenarPisos[9], 10);
+uartWriteMiDato("Buf[0]= ", almacenarPisos[0], 10);
+uartWriteMiDato("Buf[1]= ", almacenarPisos[1], 10);
+uartWriteMiDato("Buf[2]= ", almacenarPisos[2], 10);
+uartWriteMiDato("Buf[3]= ", almacenarPisos[3], 10);
+uartWriteMiDato("Buf[4]= ", almacenarPisos[4], 10);
+uartWriteMiDato("Buf[5]= ", almacenarPisos[5], 10);
+uartWriteMiDato("Buf[6]= ", almacenarPisos[6], 10);
+uartWriteMiDato("Buf[7]= ", almacenarPisos[7], 10);
+uartWriteMiDato("Buf[8]= ", almacenarPisos[8], 10);
+uartWriteMiDato("Buf[9]= ", almacenarPisos[9], 10);
 
 
 // uartWriteMiDato("Bandera Pasos = ", pasos, 10);
@@ -166,50 +176,40 @@ uartWriteMiDato("almacenarPisos[9] = ", almacenarPisos[9], 10);
 
 // uartWriteMiDato("SegundoDigito = ", segundoDigito, 10);
 
-uartWriteMiDato("Indice = ", indice, 10);
+// uartWriteMiDato("Indice = ", indice, 10);
 
 
-if (Ask_PideNuevoPisoFlag)
-	uartWriteMiDato("pideNuevoPiso = ", 1, 10);
-else	uartWriteMiDato("pideNuevoPiso = ", 0, 10);
-
-uartWriteMiDato ("Piso Destino = ", pisoDestino, 10);
-
-uartWriteMiDato ("Piso Actual = ", pisoActual, 10);
-
-
-	
-
-uartWriteString(UART_USB, "estadoActualAsc = ");
+//uartWriteString(UART_USB, "estadoActualAsc = ");
+uartWriteString(UART_USB, "Estado del Ascensor: ");
 switch(estadoActualAsc)
 	{
 	case EN_PLANTA_BAJA:
-		uartWriteString(UART_USB, "En Planta Baja\r\n");
+		uartWriteString(UART_USB, "En Planta Baja y ");
 	
 		break;
 			
 	case SUBIENDO:
-		uartWriteString(UART_USB, "Subiendo\r\n");
+		uartWriteString(UART_USB, "Subiendo y ");
 	
 		break;
 
 	case BAJANDO:
-		uartWriteString(UART_USB, "Bajando\r\n");	
+		uartWriteString(UART_USB, "Bajando y ");	
 	
 		break;
 
 	case PARADO:
-		uartWriteString(UART_USB, "Parado\r\n");	
+		uartWriteString(UART_USB, "Parado y ");	
 	
 		break;
 
 	case YENDO_A_PLANTA_BAJA:
-		uartWriteString(UART_USB, "Yendo a Planta Baja\r\n");	
+		uartWriteString(UART_USB, "Yendo a Planta Baja y ");
 	
 		break;
 
 	case MODO_CONFIGURACION:
-		uartWriteString(UART_USB, "Modo Configuracion\r\n");
+		uartWriteString(UART_USB, "Modo Configuracion y ");
 		
 		break;
 
@@ -219,7 +219,7 @@ switch(estadoActualAsc)
  	}      	
 	
 	
-uartWriteString(UART_USB, "estadoActualPuerta = ");	
+// uartWriteString(UART_USB, "estadoActualPuerta = ");	
 switch(estadoActualPuerta)
 	{
 	case PUERTA_CERRADA:
@@ -259,9 +259,15 @@ switch(estadoActualPuerta)
 		break;
  	}      
 
-uartWriteString(UART_USB, "\r\n");
+if (Ask_PideNuevoPisoFlag)
+	uartWriteString(UART_USB, "Pide nuevo piso = SI\r\n");
+else	uartWriteString(UART_USB, "Pide nuevo piso = NO\r\n");
 
+uartWriteMiDato ("Piso Destino = ", pisoDestino, 10);
+
+uartWriteMiDato ("Piso Actual = ", pisoActual, 10);
 	
+
 	
 }
 //*********************************************************************************************************************

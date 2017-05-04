@@ -1,9 +1,42 @@
 /*============================================================================
- * Licencia: 
- * Autor:   Vegh Juan Francisco Llamazares, Lucas Andres Gimenez, Fernando Guardia, Carlos Eduardo López Aldana.
- * Fecha:   21/04/2017
+ * Copyright 2017, Lucas Andres Gimenez, Carlos Eduardo López Aldana.
+ * All rights reserved.
+ *
+ * This file is part sAPI library for microcontrollers.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ 
+
+ * Date: 2017/04/10
+
  *===========================================================================*/
 
+ 
 /*==================[inlcusiones]============================================*/
 
 #include "sapi.h"                     // <= Biblioteca sAPI
@@ -27,34 +60,31 @@ typedef enum{
 
 
 /*==================[definiciones de datos internos]=========================*/
-/*==================[definiciones de datos externos]=========================*/
+static delay_t delayAntirebote;
+static bool_t flagEstadoApretandoTecla = 0;
 
-uint16_t primerDigito  = 0; // Variable para almacenar el primer digito ingresado.
-uint16_t segundoDigito = 0; // Variable para almacenar el segundo digito ingresado.
-uint16_t confirmar = 0;     // Variable para almacenar si se confirma o cancela en ingreso de los datos.
+static uint16_t primerDigito  = 0; // Variable para almacenar el primer digito ingresado.
+static uint16_t segundoDigito = 0; // Variable para almacenar el segundo digito ingresado.
+static uint16_t confirmar = 0;     // Variable para almacenar si se confirma o cancela en ingreso de los datos.
 
-uint32_t indiceTeclaPresionada = 0; // Variable que me permite saber cuantas veces fue presionado el teclado y asi saber que tecla se espera.
-uint32_t indiceTeclaGuardar = 0;    // Variable que me permite conocer que digito fue ingresado para su posterior almacenamiento. (Similar a la anterior pero se usa en main).
+static uint32_t indiceTeclaPresionada = 0; // Variable que me permite saber cuantas veces fue presionado el teclado y asi saber que tecla se espera.
+static uint32_t indiceTeclaGuardar = 0;    // Variable que me permite conocer que digito fue ingresado para su posterior almacenamiento. (Similar a la anterior pero se usa en main).
 
-
-int almacenarPisos [10];    // Vector para almacenar hasta 10 pisos ingresados correctamente.
-int indice = 0;             // Indice para recorrer el vector anterior.
 
 // Guarda la ultima tecla apretada
-uint16_t key = 0;
+static uint16_t key = 0;
 
 
-extern bool_t flagConfiguracion;
+static mefTecladoMatricial_t estadoMefTecladoMatricial;
 
-mefTecladoMatricial_t estadoMefTecladoMatricial;
-bool_t hayTeclaDisponible = 0;
-uint16_t teclaPresionada = 0xff;
+static bool_t hayTeclaDisponible = 0;
+static uint16_t teclaPresionada = 0xff;
 
 // Variable de estado de la MEF captura estodo de tecla.
-mefScanTeclado_t estadoMefScanTeclado;
+static mefScanTeclado_t estadoMefScanTeclado;
 
 /* Vector para almacenar los pines que van a estar conectados a las filas del teclado matricial. */
-uint8_t pinesFila[4] = {
+static uint8_t pinesFila[4] = {
     RS232_TXD,
     CAN_RD,
     CAN_TD,
@@ -62,7 +92,7 @@ uint8_t pinesFila[4] = {
 };
 
 /* Vector para almacenar los pines que van a estar conectados a las columnas del teclado matricial. */
-uint8_t pinesColumna[4] = {
+static uint8_t pinesColumna[4] = {
     T_FIL0,
     T_FIL3,
     T_FIL2,
@@ -76,8 +106,34 @@ static uint16_t pinesTeclado[16] = {
                                 '*', 0, '#', 'D'
 };
 
+/*==================[definiciones de datos globales]=========================*/
+int almacenarPisos [10];    // Vector para almacenar hasta 10 pisos ingresados correctamente.
+int indice = 0;             // Indice para recorrer el vector anterior.
+
+
+
+/*==================[declaraciones de datos externos]=========================*/
+extern bool_t flagConfiguracion;
+
+
+
+/*==================[declaraciones de funciones externas]====================*/
+
+
+
 
 /*==================[declaraciones de funciones internas]====================*/
+void EnviaEstadoInterno(void);
+void InicializarMEF_tecladoMatrical(void);
+void ActualizarMEF_tecladoMatricial (void);
+void cancelar (void);
+void configurarTecladoMatricial(void);
+void guardarPisoSimple(int primerDigito);
+void guardarPisoDoble (int primerDigito, int segundoDigito);
+bool_t ingresarDigito(void);
+bool_t ScanTeclas(void);
+void ActualizaMEFScanTecla(void);
+
 
 //*********************************************************************************************************************
 //
@@ -105,7 +161,7 @@ uint8_t i = 0;  // Variable para recorrer el vector de filas y columnas.
 //*********************************************************************************************************************
 //
 //*********************************************************************************************************************
-void inicializarMEF_tecladoMatrical(void) {
+void InicializarMEF_tecladoMatrical(void) {
 
 estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
 configurarTecladoMatricial();
@@ -188,10 +244,6 @@ void ActualizaMEFScanTecla(void)
 // Al haber confirmado el proceso de una tecla pone "hayTeclaDisponible" en 1;
 // Y la tecla confirmada en "teclaPresionada".
 
-static delay_t delayAntirebote;
-static bool_t flagEstadoApretandoTecla = 0;
-
-
 switch(estadoMefScanTeclado)
 	{
 	case ESCANEANDO_TECLADO:
@@ -247,7 +299,7 @@ switch(estadoMefScanTeclado)
 
 	
 	default:
-	inicializarMEF_tecladoMatrical();
+	InicializarMEF_tecladoMatrical();
 	break;
    }
 }
@@ -260,7 +312,7 @@ switch(estadoMefScanTeclado)
 //*********************************************************************************************************************
 //
 //*********************************************************************************************************************
-void actualizarMEF_tecladoMatricial (void) { 
+void ActualizarMEF_tecladoMatricial (void) { 
 
 ActualizaMEFScanTecla();
 	
@@ -306,7 +358,7 @@ switch (estadoMefTecladoMatricial) {
 		break;
 
 	default:	
-		inicializarMEF_tecladoMatrical();
+		InicializarMEF_tecladoMatrical();
 	break;
 	}		
 }
