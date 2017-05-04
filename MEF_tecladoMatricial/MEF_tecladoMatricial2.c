@@ -86,12 +86,9 @@ static delay_t delayAntirebote;
 		case EN_ESPERA_DE_DIGITO_2:
 			if (delayRead (&delayAntirebote) ) {
 				if( ingresarDigito() ) {
-
-					if (indiceTeclaGuardar == 0) {
 						estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
 						delayConfig(&delayAntirebote, 40);
-						indiceTeclaGuardar == 0;
-						}
+						
 
 					if (pinesTeclado[segundoDigito] == 'A') {
 						estadoMefTecladoMatricial = GUARDAR_PISO;
