@@ -61,7 +61,7 @@ typedef enum{
 
 /*==================[definiciones de datos internos]=========================*/
 static delay_t delayAntirebote;
-static bool_t flagEstadoApretandoTecla = 0;
+
 
 static uint16_t primerDigito  = 0; // Variable para almacenar el primer digito ingresado.
 static uint16_t segundoDigito = 0; // Variable para almacenar el segundo digito ingresado.
@@ -166,7 +166,7 @@ void InicializarMEF_tecladoMatrical(void) {
 estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
 configurarTecladoMatricial();
 estadoMefScanTeclado = ESCANEANDO_TECLADO;
-
+delayConfig(&delayAntirebote, 40);
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -258,12 +258,6 @@ switch(estadoMefScanTeclado)
 
 
 	case APRETANDO_TECLA:
-		// Con un flag ejecuto una vez al ingresar al estado.
-		if (flagEstadoApretandoTecla == 0)
-			{
-			flagEstadoApretandoTecla= 1;
-			delayConfig(&delayAntirebote, 40);
-			}
 		// Salida en el estado.
 		// El delay se incrementa solo!
 		// Chequear condiciones de transicion de estado.
@@ -272,19 +266,13 @@ switch(estadoMefScanTeclado)
 			ScanTeclas();
 			// Esta la misma tecla presionada?
 			if (teclaPresionada == key)
-				{
 				estadoMefScanTeclado = IDENTIFICAR_TECLA_Y_ESCRIBIR;
-				flagEstadoApretandoTecla = 0;
-				}
 			// No esta presionada la misma tecla.
 			else	{
 				estadoMefScanTeclado = ESCANEANDO_TECLADO;
 				teclaPresionada = 0xff;
-				flagEstadoApretandoTecla = 0;
 				}
 			}      
-
-
 	break;
 
 
