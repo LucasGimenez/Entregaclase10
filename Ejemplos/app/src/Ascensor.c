@@ -80,7 +80,7 @@ extern void EstadoInterno(void);
 // extern void configurarTeclado(void);
 // extern void actualizarMEF_tecladoMatricial (void);
 extern void ConfigDisplay(void);
-extern void PonPisoActualDisplay(void);
+extern void ActualizarDisplay(void);
 
 
 
@@ -91,7 +91,7 @@ extern void PonPisoActualDisplay(void);
 bool_t IntTimer (void *ptr)
 {
 
-PonPisoActualDisplay();
+ActualizarDisplay();
 	
 
 return 1;
