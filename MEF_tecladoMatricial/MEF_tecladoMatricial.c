@@ -187,6 +187,8 @@ bool_t ret = 0;
 uint8_t f = 0; // Variable para recorrer los vectores de filas.
 uint8_t c = 0; // Variable para recorrer los vectores de columnas.
 
+key = 0xff;
+
 // Lo primero que hacemos es poner todas las filas en estado "bajo".
 for (f=0; f<4; f++)
 	gpioWrite(pinesFila[f], 0);
@@ -267,7 +269,7 @@ switch(estadoMefScanTeclado)
 			// Esta la misma tecla presionada?
 			if (teclaPresionada == key)
 				estadoMefScanTeclado = IDENTIFICAR_TECLA_Y_ESCRIBIR;
-			// No esta presionada la misma tecla.
+			// No esta presionada la misma tecla o ninguna.
 			else	{
 				estadoMefScanTeclado = ESCANEANDO_TECLADO;
 				teclaPresionada = 0xff;
