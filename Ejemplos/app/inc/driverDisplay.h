@@ -48,7 +48,7 @@ void ConfigDisplay(void);
 
 
 // Actualiza display con el piso actual.
-void PonPisoActualDisplay(void);
+void ActualizarDisplay(void);
 
 
 /*==================[end of file]============================================*/
