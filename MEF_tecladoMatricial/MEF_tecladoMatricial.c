@@ -78,10 +78,8 @@ static delay_t delayAntirebote;
 	
 		case EN_ESPERA_DE_DIGITO_1:
 			if( ingresarDigito() ) {
-				if ( indiceTeclaGuardar == 0 ) {
 					estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_2;
 					delayConfig(&delayAntirebote, 40);
-				}
 			}
 		break;
 			
@@ -111,11 +109,8 @@ static delay_t delayAntirebote;
 		case EN_ESPERA_DE_LETRA:
 			if (delayRead (&delayAntirebote) ) {
 				if ( ingresarDigito() ) {
-					if (indiceTeclaGuardar == 1) {
 						estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
 						delayConfig(&delayAntirebote, 40);
-						indiceTeclaGuardar == 0;
-						}
 					
 					if (pinesTeclado[confirmar] == 'A' ) {
 						estadoMefTecladoMatricial = GUARDAR_PISO;
