@@ -89,7 +89,7 @@ static delay_t delayAntirebote;
 			if (delayRead (&delayAntirebote) ) {
 				if( ingresarDigito() ) {
 
-					if (indiceTeclaGuardar == 1) {
+					if (indiceTeclaGuardar == 0) {
 						estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
 						delayConfig(&delayAntirebote, 40);
 						indiceTeclaGuardar == 0;
@@ -111,6 +111,12 @@ static delay_t delayAntirebote;
 		case EN_ESPERA_DE_LETRA:
 			if (delayRead (&delayAntirebote) ) {
 				if ( ingresarDigito() ) {
+					if (indiceTeclaGuardar == 1) {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
+						delayConfig(&delayAntirebote, 40);
+						indiceTeclaGuardar == 0;
+						}
+					
 					if (pinesTeclado[confirmar] == 'A' ) {
 						estadoMefTecladoMatricial = GUARDAR_PISO;
 						guardarPisoDoble (primerDigito, segundoDigito);
@@ -125,7 +131,7 @@ static delay_t delayAntirebote;
 			break;
 	
 		default:	
-			inicializarTecladoMatrical();
+			inicializarMEF_tecladoMatrical();
 		break;
 	}		
 }
@@ -192,7 +198,7 @@ bool_t ingresarDigito (void){
                     
                 case 0:  primerDigito = i * 4 + j;
                            indiceTeclaPresionada = 1;
-                        break;
+                	break;
                 
                 case 1:  segundoDigito = i * 4 + j;
                             if ((pinesTeclado[segundoDigito] == 'A') || (pinesTeclado[segundoDigito] == 'B')) {
@@ -202,12 +208,12 @@ bool_t ingresarDigito (void){
                             else {
                                 indiceTeclaPresionada = 2;
                             }
-                        break;
+                	break;
                     
                 case 2:  confirmar = i * 4 + j;
                            indiceTeclaPresionada= 0;
                            indiceTeclaGuardar = 1;
-                        break;
+                	break;
                 }
                           
                 /*
@@ -243,7 +249,7 @@ void guardarPisoSimple (int primerDigito) {
 	/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
 	primerDigito  = 0;
 	segundoDigito = 0;
-	indiceTeclaGuardar = 0;void actualizarMEF_tecladoMatricial (void);
+	indiceTeclaGuardar = 0;
 }
 
 void guardarPisoDoble (int primerDigito, int segundoDigito) {
@@ -278,18 +284,18 @@ void guardarPisoDoble (int primerDigito, int segundoDigito) {
 	}
     
 	/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
-	primerDigito  = 0xFF;
-	segundoDigito = 0xFF;
+	primerDigito  = 0;
+	segundoDigito = 0;
 	indiceTeclaGuardar = 0;
 
 }
 
 void cancelar (void) {
     
-/*======= Para cancelar la operacion le seteamos un valor no valido a las siguientes variables =======*/
-	uint16_t primerDigito  = 0xFF; 
-	uint16_t segundoDigito = 0xFF; 
-	uint16_t confirmar = 0xFF;     
+	/*======= Para cancelar la operacion le seteamos un valor no valido a las siguientes variables =======*/
+	uint16_t primerDigito  = 0; 
+	uint16_t segundoDigito = 0; 
+	uint16_t confirmar = 0;     
 
 	uint32_t indiceTeclaPresionada = 0; 
 	uint32_t indiceTeclaGuardar = 0;
