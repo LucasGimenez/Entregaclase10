@@ -15,7 +15,7 @@
 
 /*==================[definiciones de datos externos]=========================*/
 
-bool_t flagModoConfiguracion = FALSE;
+extern bool_t flagModoConfiguracion = FALSE;
 
 extern uint32_t velocidadEntrePisos = 0; // En segundos, de 1 en adelante
 extern uint32_t velocidadPuertas = 0;    // En segundos, de 1 en adelante
