@@ -10,8 +10,6 @@
 /*==================[inclusiones]============================================*/
 
 void modoConfiguracion( void );
-bool_t configuracionCompletada ( void );
-
 
 /*==================[end of file]============================================*/
 #endif /* _MEF_TECLADOMATRICIAL_H_ */
