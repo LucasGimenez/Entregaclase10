@@ -1,7 +1,7 @@
 ********************************************************************************
 
 Todo el código fue diseñado y desarrollado por Carlos Eduardo López Aldana y
-Lucas Andres Gimenez, como parte del trabajo prático entregable de la clase
+Lucas Andres Gimenez, como parte del trabajo práctico entregable de la clase
 número 10, en el marco de los Cursos Abiertos de Programacion de Sistemas
 Embebidos (CAPSE). Año 2017.
 

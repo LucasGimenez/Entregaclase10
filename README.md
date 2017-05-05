@@ -11,7 +11,7 @@ ascensor con sus correspondientes especificaciones.
 El repositorio contiene un directorio raíz que fue llamado "Ascensor" y dentro de él se pueden encontrar
 2 sub-directorios más. Uno contiene todos los archivos .c donde se encuentran el archivo principal 
 (Ascensor.c) y todo el banco de drivers y máquinas de estados finitos del sistema completo (Source),
-mientras que el otro contiene los archivos .h que conforman las librerias del sistema (Library). 
+mientras que el otro contiene los archivos .h que conforman las librerias del sistema (Include). 
 
 ********************************************************************************************************
 
