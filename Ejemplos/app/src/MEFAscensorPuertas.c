@@ -40,7 +40,7 @@
 
 #include "sapi.h"		// <= Biblioteca sAPI
 #include "MEFAscensorPuertas.h"	// <= Biblioteca MEF ascensor
-
+#include "modoConfiguracion.h"
 
 /*==================[definiciones y macros]==================================*/
 
@@ -65,19 +65,6 @@
 
 
 /*==================[definiciones de datos internos]=========================*/
-static int8_t pideConfiguracion = 0;
-
-// Velocidad del ascensor 1000 = 1seg. Puede cambiar por Configuracion externa
-static uint16_t velPisoPiso = 2000;
-
-// Velocidad de apertura y cierre de puerta 1000 = 1s.Puede cambiar por Configuracion externa
-static uint16_t velAbreCierraPuerta = 2000;
-
-// Indica el numero de pisos. Puede cambiar por Configuracion externa
-static uint8_t maximoDePisos =  20;
-
-// Indica el numero de subsuelos. Puede cambiar por Configuracion externa
-static uint8_t MaximoDeSubsuelos = 2;
 
 // Variable para manejo parpadeo led alarma.
 static delay_t timAlarPuerta;
@@ -119,6 +106,19 @@ int8_t pisoDestino = 0;
 
 bool_t flagConfiguracion = 0;
 
+// Velocidad del ascensor 1000 = 1seg. Puede cambiar por Configuracion externa
+uint32_t velPisoPiso = 2000;
+
+// Velocidad de apertura y cierre de puerta 1000 = 1s.Puede cambiar por Configuracion externa
+uint32_t velAbreCierraPuerta = 2000;
+
+// Indica el numero de pisos. Puede cambiar por Configuracion externa
+uint8_t maximoDePisos =  20;
+
+// Indica el numero de subsuelos. Puede cambiar por Configuracion externa
+uint8_t maximoDeSubsuelos = 5;
+
+
 
 
 /*==================[declaraciones de datos externos]=========================*/
@@ -139,7 +139,7 @@ void InicializarMEFPuerta(void);
 void ActualizaMEFPuerta(void);
 void CargaNuevoPiso(void);
 
-
+bool_t modoConfiguracion(void);
 
 
 //*********************************************************************************************************************
@@ -274,8 +274,9 @@ switch(estadoActualAsc)
 			}
 		
 		// Se consulta si pide modo Configuracion.
-		if (pideConfiguracion)//COMPLETAR!!!
+		if (flagConfiguracion)
 			{
+			flagConfiguracion = 0;
 			estadoActualAsc = MODO_CONFIGURACION;
 			}
 
@@ -433,14 +434,11 @@ switch(estadoActualAsc)
 		break;
 
 	case MODO_CONFIGURACION:
-		// AL INGRESAR AL EL ESTADO SE EJECUTA POR UNICA VEZ:
-		// Secuencia de configuracion.
 		
-		
+		// Secuencia de configuracion y CAMBIO DE ESTADO.
+		if (modoConfiguracion())
+			estadoActualAsc = EN_PLANTA_BAJA;
 	
-		// CAMBIO DE ESTADO:
-		// Se completo la configuracion.
-		estadoActualAsc = EN_PLANTA_BAJA;
 		break;
 
 		

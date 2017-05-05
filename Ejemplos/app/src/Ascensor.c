@@ -65,7 +65,7 @@ extern int8_t pideNuevoPiso;
 extern int8_t pisoDestino;
 extern int almacenarPisos[10];
 extern int indice;
-
+extern estadoMEFASC_t estadoActualAsc;
 
 /*==================[declaraciones de funciones externas]====================*/
 extern void EnviaEstadoInterno(void);
@@ -167,7 +167,8 @@ ActualizaMEFPuerta();
 // y de fija indice a 10.
 if (delayRead(&timSerial))
 	{
-	EnviaEstadoInterno();
+	if (estadoActualAsc != MODO_CONFIGURACION)
+		EnviaEstadoInterno();
 	
 	if (!gpioRead(TEC4))
 		{

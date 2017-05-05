@@ -1,4 +1,4 @@
-out/app/src/MEFAscensorPuertas.o: app/src/MEFAscensorPuertas.c \
+out/app/src/modoConfiguracion.o: app/src/modoConfiguracion.c \
  libs/sapi/inc/sapi.h libs/sapi/inc/sapi_datatypes.h \
  libs/lpc_chip_43xx/inc/chip.h libs/lpc_chip_43xx/inc/sys_config.h \
  libs/lpc_chip_43xx/inc/cmsis.h libs/lpc_chip_43xx/inc/lpc_types.h \
@@ -66,5 +66,5 @@ out/app/src/MEFAscensorPuertas.o: app/src/MEFAscensorPuertas.c \
  libs/sapi/inc/sapi_rtc.h libs/sapi/inc/sapi_sleep.h \
  libs/sapi/inc/sapi_7_segment_display.h libs/sapi/inc/sapi_keypad.h \
  libs/sapi/inc/sapi_pwm.h libs/sapi/inc/sapi_servo.h \
- libs/sapi/inc/sapi_hmc5883l.h app/inc/MEFAscensorPuertas.h \
- app/inc/modoConfiguracion.h
+ libs/sapi/inc/sapi_hmc5883l.h app/inc/modoConfiguracion.h \
+ app/inc/MEFAscensorPuertas.h
