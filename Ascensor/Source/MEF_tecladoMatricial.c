@@ -419,11 +419,15 @@ return ret;
 //*********************************************************************************************************************
 bool_t VerificaExclusionPisoSimple(int carga)
 {
+// Si la funcion retorna 1 permite guardar.
+
 bool_t salida = 1;
 
+// Si el ascensor se esta moviendo se permite cargar el piso, aunque sea el mismo piso.
 // El piso que se pide guardar es el mismo al que se encuentra actualmente el asccensor?
-if (carga == pisoActual)
+if ((carga == pisoActual) && (estadoActualAsc != SUBIENDO) && (estadoActualAsc != BAJANDO))
 	salida = 0;
+
 if ((carga == almacenarPisos[0]) || (carga == almacenarPisos[1]) || (carga == almacenarPisos[2]) || (carga == almacenarPisos[3]) ||
     (carga == almacenarPisos[4]) || (carga == almacenarPisos[5]) || (carga == almacenarPisos[6]) || (carga == almacenarPisos[7]) ||
     (carga == almacenarPisos[8]) || (carga == almacenarPisos[9]))

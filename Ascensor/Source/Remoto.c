@@ -43,7 +43,7 @@
 #include "MEF_ascensorPuertas.h"	// <= Biblioteca MEF ascensor
 
 /*==================[definiciones y macros]==================================*/
-#define ESTADOTEST 1
+//#define ESTADOTEST 1
 
 
 /*==================[definiciones de datos internos]=========================*/
