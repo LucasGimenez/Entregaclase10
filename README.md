@@ -13,6 +13,10 @@ El repositorio contiene un directorio raíz que fue llamado "Ascensor" y dentro 
 (Ascensor.c) y todo el banco de drivers y máquinas de estados finitos del sistema completo (Source),
 mientras que el otro contiene los archivos .h que conforman las librerias del sistema (Include). 
 
+A continuación un video con la demostración del sistema funcionando:
+
+             - https://drive.google.com/file/d/0B-ZG4WJl8U-JLUpYM0tmZDh4NHc/view?usp=sharing
+
 ********************************************************************************************************
 
 Contacto con los autores:
