@@ -41,6 +41,7 @@
 
 #include "sapi.h"                     // <= Biblioteca sAPI
 #include "MEF_tecladoMatricial.h"   // <= su propio archivo de cabecera
+#include "MEF_ascensorPuertas.h"	// <= Biblioteca MEF ascensor
 
 /*==================[definiciones y macros]==================================*/
 
@@ -114,11 +115,16 @@ int indice = 0;             // Indice para recorrer el vector anterior.
 
 /*==================[declaraciones de datos externos]=========================*/
 extern bool_t flagConfiguracion;
+extern uint32_t contadorTeclas;
+extern int8_t pisoActual;
+extern estadoMEFASC_t estadoActualAsc;
+extern uint8_t maximoDePisos;
+extern uint8_t maximoDeSubsuelos;
 
 
 
 /*==================[declaraciones de funciones externas]====================*/
-
+extern estadoMEFAbreCierraPuerta_t estadoActualPuerta;
 
 
 
@@ -133,7 +139,7 @@ void guardarPisoDoble (int primerDigito, int segundoDigito);
 bool_t ingresarDigito(void);
 bool_t ScanTeclas(void);
 void ActualizaMEFScanTecla(void);
-
+bool_t VerificaExclusionPisoSimple(int carga);
 
 //*********************************************************************************************************************
 //
@@ -284,6 +290,7 @@ switch(estadoMefScanTeclado)
 			{
 			estadoMefScanTeclado = ESCANEANDO_TECLADO;  
 			hayTeclaDisponible = 1;
+			contadorTeclas++;
 			}
 	break;
 
@@ -302,55 +309,58 @@ switch(estadoMefScanTeclado)
 //*********************************************************************************************************************
 //
 //*********************************************************************************************************************
-void ActualizarMEF_tecladoMatricial (void) { 
-
-ActualizaMEFScanTecla();
-	
-switch (estadoMefTecladoMatricial) {
-
-	case EN_ESPERA_DE_DIGITO_1:
-		if( ingresarDigito() ) {
-				estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_2;
-		}
-	break;
+void ActualizarMEF_tecladoMatricial (void)
+{ 
+if (estadoActualAsc != MODO_CONFIGURACION)
+	{
+	ActualizaMEFScanTecla();
 		
-	case EN_ESPERA_DE_DIGITO_2:
+	switch (estadoMefTecladoMatricial) {
+
+		case EN_ESPERA_DE_DIGITO_1:
 			if( ingresarDigito() ) {
-					estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
-				
-
-				if (pinesTeclado[segundoDigito] == 'A') {
-					guardarPisoSimple (primerDigito);
-					estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
-
-				}
-				else if (pinesTeclado[confirmar] == 'B') {
-					estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
-					cancelar();
-				}
+					estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_2;
 			}
 		break;
+			
+		case EN_ESPERA_DE_DIGITO_2:
+				if( ingresarDigito() ) {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
+					
 
-	case EN_ESPERA_DE_LETRA:
-			if ( ingresarDigito() ) {
-					estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
-				
-				if (pinesTeclado[confirmar] == 'A' ) {
-					estadoMefTecladoMatricial = GUARDAR_PISO;
-					guardarPisoDoble (primerDigito, segundoDigito);
-				}
+					if (pinesTeclado[segundoDigito] == 'A') {
+						guardarPisoSimple (primerDigito);
+						estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
 
-				else if (pinesTeclado[confirmar] == 'B') {
-					estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
-					cancelar();
+					}
+					else if (pinesTeclado[confirmar] == 'B') {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
+						cancelar();
+					}
 				}
-			}
+			break;
+
+		case EN_ESPERA_DE_LETRA:
+				if ( ingresarDigito() ) {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_LETRA;
+					
+					if (pinesTeclado[confirmar] == 'A' ) {
+						estadoMefTecladoMatricial = GUARDAR_PISO;
+						guardarPisoDoble (primerDigito, segundoDigito);
+					}
+
+					else if (pinesTeclado[confirmar] == 'B') {
+						estadoMefTecladoMatricial = EN_ESPERA_DE_DIGITO_1;
+						cancelar();
+					}
+				}
+			break;
+
+		default:	
+			InicializarMEF_tecladoMatrical();
 		break;
-
-	default:	
-		InicializarMEF_tecladoMatrical();
-	break;
-	}		
+		}		
+	}
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -407,60 +417,100 @@ return ret;
 //*********************************************************************************************************************
 //
 //*********************************************************************************************************************
-void guardarPisoSimple (int primerDigito) {
-	/*======= Funcion que almacena el piso ingresado, de un solo digito, en el vector =======*/
-	if (indice < 10) {
+bool_t VerificaExclusionPisoSimple(int carga)
+{
+bool_t salida = 1;
 
-		if (indice > 0)
-			almacenarPisos[indice] = pinesTeclado[primerDigito];
-		else
-			almacenarPisos[0] = pinesTeclado[primerDigito];
-
-		indice ++;
-	}
-
-	/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
-	primerDigito  = 0;
-	segundoDigito = 0;
-	indiceTeclaGuardar = 0;
+// El piso que se pide guardar es el mismo al que se encuentra actualmente el asccensor?
+if (carga == pisoActual)
+	salida = 0;
+if ((carga == almacenarPisos[0]) || (carga == almacenarPisos[1]) || (carga == almacenarPisos[2]) || (carga == almacenarPisos[3]) ||
+    (carga == almacenarPisos[4]) || (carga == almacenarPisos[5]) || (carga == almacenarPisos[6]) || (carga == almacenarPisos[7]) ||
+    (carga == almacenarPisos[8]) || (carga == almacenarPisos[9]))
+	salida = 0;
+    
+return salida;
 }
+//*********************************************************************************************************************
+//*********************************************************************************************************************
 
+
+
+
+//*********************************************************************************************************************
+//
+//*********************************************************************************************************************
+void guardarPisoSimple (int primerDigito)
+{
+/*======= Funcion que almacena el piso ingresado, de un solo digito, en el vector =======*/
+int carga = 0;
+
+carga = pinesTeclado[primerDigito];
+// Se verifica si el piso no debe ser almacenado.
+if (VerificaExclusionPisoSimple(carga))
+	{
+	/*======= Etapa de guardar un subsuelo (numero negativo) en el vector de almacenamiento =======*/
+	if (indice < 10)
+		{
+		if (indice > 0)
+			almacenarPisos[indice] = carga;
+		else
+			almacenarPisos[0] = carga;
+		indice ++;
+		}
+	}
+/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
+primerDigito  = 0;
+segundoDigito = 0;
+indiceTeclaGuardar = 0;
+}
+//*********************************************************************************************************************
+//*********************************************************************************************************************
+
+
+
+
+//*********************************************************************************************************************
+//
+//*********************************************************************************************************************
 void guardarPisoDoble (int primerDigito, int segundoDigito) {
 	
-	/*======= Funcion que almacena el piso ingresado, de dos digitos, en el vector =======*/
-	
-	int carga = 0;
-	
-	/*======= Etapa de guardar un subsuelo (numero negativo) en el vector de almacenamiento =======*/
-	if (pinesTeclado[primerDigito] == '#' && pinesTeclado[segundoDigito] <= 5)
-		carga = 0 - pinesTeclado[segundoDigito];
-	else 
-		carga = (pinesTeclado[primerDigito] * 10) + pinesTeclado[segundoDigito];
-	
-	/*======= Etapa para verificar si se desea entrar al modo configuracion =======*/
-    if (carga == 99) {
-    flagConfiguracion = TRUE;
-    }
-	
+/*======= Funcion que almacena el piso ingresado, de dos digitos, en el vector =======*/
+
+int carga = 0xff;
+
+/*======= Etapa de guardar un subsuelo (numero negativo) en el vector de almacenamiento =======*/
+if ((pinesTeclado[primerDigito] == '#') && (pinesTeclado[segundoDigito] <= maximoDeSubsuelos))
+	carga = 0 - pinesTeclado[segundoDigito];
+else if (!(pinesTeclado[primerDigito] == '#'))
+	carga = (pinesTeclado[primerDigito] * 10) + pinesTeclado[segundoDigito];
+
+/*======= Etapa para verificar si se desea entrar al modo configuracion =======*/
+
+if ((carga == 99) && (pisoActual == 0) && (estadoActualPuerta == PUERTA_ABIERTA))
+	flagConfiguracion = TRUE;
+
+
+// Se verifica si el piso no debe ser almacenado.
+if (VerificaExclusionPisoSimple(carga) && (carga != 0xff))
+	{
 	/*======= Etapa de carga en el vector que almacena los pisos ingresados =======*/	
-	if (indice < 10){
-
-		if (carga <= 20){
-
+	if (indice < 10)
+		{
+		if (carga <= maximoDePisos)
+			{
 			if (indice > 0)
 				almacenarPisos[indice] = carga;
 			else 
 				almacenarPisos[0] = carga;
-
 			indice++;
+			}
 		}
 	}
-    
-	/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
-	primerDigito  = 0;
-	segundoDigito = 0;
-	indiceTeclaGuardar = 0;
-
+/*======= Etapa para reinicializar las variables utilizadas y prepararlas para el proximo ingreso =======*/
+primerDigito  = 0;
+segundoDigito = 0;
+indiceTeclaGuardar = 0;
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -473,13 +523,13 @@ void guardarPisoDoble (int primerDigito, int segundoDigito) {
 //*********************************************************************************************************************
 void cancelar (void) {
     
-	/*======= Para cancelar la operacion le seteamos un valor no valido a las siguientes variables =======*/
-	uint16_t primerDigito  = 0; 
-	uint16_t segundoDigito = 0; 
-	uint16_t confirmar = 0;     
+/*======= Para cancelar la operacion le seteamos un valor no valido a las siguientes variables =======*/
+uint16_t primerDigito  = 0; 
+uint16_t segundoDigito = 0; 
+uint16_t confirmar = 0;     
 
-	uint32_t indiceTeclaPresionada = 0; 
-	uint32_t indiceTeclaGuardar = 0;
+uint32_t indiceTeclaPresionada = 0; 
+uint32_t indiceTeclaGuardar = 0;
     
 }
 //*********************************************************************************************************************

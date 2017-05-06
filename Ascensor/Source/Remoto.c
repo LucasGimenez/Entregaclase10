@@ -43,16 +43,17 @@
 #include "MEF_ascensorPuertas.h"	// <= Biblioteca MEF ascensor
 
 /*==================[definiciones y macros]==================================*/
-
+#define ESTADOTEST 1
 
 
 /*==================[definiciones de datos internos]=========================*/
+delay_t timSerial;
 
 
 /*==================[definiciones de datos globales]=========================*/
 //SACAR ESTAS VARIABLES
 uint8_t numeroEnString[10];
-uint32_t pasos = 0;
+uint32_t contadorTeclas = 0;
 
 
 
@@ -78,12 +79,13 @@ extern uint32_t indiceTeclaPresionada;
 
 
 
+
 /*==================[declaraciones de funciones internas]====================*/
 char* itoa(int value, char* result, int base);
 void uartWriteMiDato(char* str, int value, int base);
 void EnviaEstadoInterno(void);
-
-
+void ActualizaInfoRemoto(void);
+void ConfiguraRemoto(void);
 
 
 
@@ -156,6 +158,16 @@ void EnviaEstadoInterno(void)
 uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 
 
+// Variables y banderas para el debbuger remoto, se muestran si esta definido ESTADOTEST.
+#ifdef ESTADOTEST
+uartWriteMiDato("Numero de teclas presionadas = ", contadorTeclas, 10);
+// uartWriteMiDato("PrimerDigito = ", primerDigito, 10);
+// uartWriteMiDato("SegundoDigito = ", segundoDigito, 10);
+#endif   	
+
+
+
+
 uartWriteMiDato("Buf[0]= ", almacenarPisos[0], 10);
 uartWriteMiDato("Buf[1]= ", almacenarPisos[1], 10);
 uartWriteMiDato("Buf[2]= ", almacenarPisos[2], 10);
@@ -168,94 +180,67 @@ uartWriteMiDato("Buf[8]= ", almacenarPisos[8], 10);
 uartWriteMiDato("Buf[9]= ", almacenarPisos[9], 10);
 
 
-// uartWriteMiDato("Bandera Pasos = ", pasos, 10);
+uartWriteMiDato("IndiceBuffer = ", indice, 10);
 
-// uartWriteMiDato("IndiceTeclaPresionada = ", indiceTeclaPresionada, 10);
-
-// uartWriteMiDato("PrimerDigito = ", primerDigito, 10);
-
-// uartWriteMiDato("SegundoDigito = ", segundoDigito, 10);
-
-// uartWriteMiDato("Indice = ", indice, 10);
-
-
-//uartWriteString(UART_USB, "estadoActualAsc = ");
 uartWriteString(UART_USB, "Estado del Ascensor: ");
 switch(estadoActualAsc)
 	{
 	case EN_PLANTA_BAJA:
 		uartWriteString(UART_USB, "En Planta Baja y ");
-	
 		break;
 			
 	case SUBIENDO:
 		uartWriteString(UART_USB, "Subiendo y ");
-	
 		break;
 
 	case BAJANDO:
 		uartWriteString(UART_USB, "Bajando y ");	
-	
 		break;
 
 	case PARADO:
 		uartWriteString(UART_USB, "Parado y ");	
-	
 		break;
 
 	case YENDO_A_PLANTA_BAJA:
 		uartWriteString(UART_USB, "Yendo a Planta Baja y ");
-	
 		break;
 
 	case MODO_CONFIGURACION:
 		uartWriteString(UART_USB, "Modo Configuracion y ");
-		
 		break;
 
 	default:
-
 		break;
  	}      	
 	
 	
-// uartWriteString(UART_USB, "estadoActualPuerta = ");	
 switch(estadoActualPuerta)
 	{
 	case PUERTA_CERRADA:
 		uartWriteString(UART_USB, "Puertas Cerradas\r\n");
-
 		break;
 
 	case ABRIENDO_PUERTA:
 		uartWriteString(UART_USB, "Abriendo Puertas\r\n");
-		
 		break;
 
 	case PUERTA_ABIERTA:
 		uartWriteString(UART_USB, "Puertas Abiertas\r\n");
-		
 		break;
 
 	case INTENTANDO_CERRAR_PUERTAS:
 		uartWriteString(UART_USB, "Intentado Cerrar Puertas\r\n");
-		
 		break;
-	
 	
 	case CERRANDO_PUERTA:
 		uartWriteString(UART_USB, "Cerrando Puertas\r\n");
-		
 		break;
 
 	case ALARMA_PUERTA_ABIERTA:
 		uartWriteString(UART_USB, "Alarma Puertas Abiertas\r\n");
-		
 		break;
 
-
 	default:
-
 		break;
  	}      
 
@@ -267,8 +252,6 @@ uartWriteMiDato ("Piso Destino = ", pisoDestino, 10);
 
 uartWriteMiDato ("Piso Actual = ", pisoActual, 10);
 	
-
-	
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -276,6 +259,17 @@ uartWriteMiDato ("Piso Actual = ", pisoActual, 10);
 
 
 
+//*********************************************************************************************************************
+//
+//*********************************************************************************************************************
+void ConfiguraRemoto(void)
+{
+// UART_USB a 115200 baudios.
+uartConfig( UART_USB, 115200 );
+delayConfig(&timSerial, 200);   
+}
+//*********************************************************************************************************************
+//*********************************************************************************************************************
 
 
 
@@ -283,10 +277,34 @@ uartWriteMiDato ("Piso Actual = ", pisoActual, 10);
 //*********************************************************************************************************************
 //
 //*********************************************************************************************************************
-// AL INGRESAR AL EL ESTADO SE EJECUTA POR UNICA VEZ:
-// SALIDA EN EL ESTADO:
-// CAMBIO DE ESTADO:
-
-
+void ActualizaInfoRemoto(void)
+{
+if (delayRead(&timSerial))
+	{
+	if (estadoActualAsc != MODO_CONFIGURACION)
+		EnviaEstadoInterno();
+// Codigo de prueba, presionando la tecla 4 se cargan valores en las 10 posiciones del buffer de pisos
+// y de fija indice a 10.	
+	if (!gpioRead(TEC4) && (estadoActualAsc != MODO_CONFIGURACION))
+		{
+		almacenarPisos[0] = 6;
+		almacenarPisos[1] = 9;
+		almacenarPisos[2] = 12;
+		almacenarPisos[3] = 17;
+		almacenarPisos[4] = 20;
+		almacenarPisos[5] = 10;
+		almacenarPisos[6] = -5;
+		almacenarPisos[7] = 5;
+		almacenarPisos[8] = -3;
+		almacenarPisos[9] = 8;
+		indice = 10;
+		}
+	}
+}
 //*********************************************************************************************************************
 //*********************************************************************************************************************
+
+
+
+
+/*==================[fin del archivo]========================================*/

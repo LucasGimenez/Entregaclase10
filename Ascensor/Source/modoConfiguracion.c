@@ -68,7 +68,6 @@ extern uint8_t maximoDeSubsuelos;
 
 
 
-
 /*
 "1 - Configurar velocidad entre piso y piso."
 "2 - Configurar velocidad de apertura o cerrado de puertas."
@@ -87,43 +86,11 @@ bool_t modoConfiguracion(void);
 
 
 /*==================[definiciones de funciones externas]=====================*/
+extern char* itoa(int value, char* result, int base);
 
 
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-/**
- * C++ version 0.4 char* style "itoa":
- * Written by Lukás Chmela
- * Released under GPLv3.
 
- */
-char* itoa_2(int value, char* result, int base)
-{
-   // check that the base if valid
-   if (base < 2 || base > 36) { *result = '\0'; return result; }
 
-   char* ptr = result, *ptr1 = result, tmp_char;
-   int tmp_value;
-
-   do {
-      tmp_value = value;
-      value /= base;
-      *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-   } while ( value );
-
-   // Apply negative sign
-   if (tmp_value < 0) *ptr++ = '-';
-   *ptr-- = '\0';
-   while(ptr1 < ptr) {
-      tmp_char = *ptr;
-      *ptr--= *ptr1;
-      *ptr1++ = tmp_char;
-   }
-   return result;
-}
-//*********************************************************************************************************************
-//*********************************************************************************************************************
 
 
 
@@ -131,13 +98,13 @@ char* itoa_2(int value, char* result, int base)
 
 
 bool_t modoConfiguracion( void ){
+
 bool_t salida = 0;
 	
 static bool_t flagCase1 = 0;
 static bool_t flagCase2 = 0;
 static bool_t flagCase3 = 0;
 static bool_t flagCase4 = 0;
-static bool_t flagCase5 = 0;
 static bool_t flagMenu  = 0;
 static bool_t flagDatoMenu = 0;
 
@@ -148,57 +115,54 @@ static uint32_t datoRecibido = 0;
 
     
 /*================== MENU =====================*/
-    if (!flagMenu) {
-	    
+if (!flagMenu) {
 	uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 	uartWriteString( UART_USB, "Elija una de las siguientes opciones a configurar:\r\n" );
-	
+
 	uartWriteString( UART_USB, "1) Configurar velocidad entre piso y piso (seg):  " );
 	valor = velPisoPiso / 1000;
-	itoa_2( valor, numeroEnString, 10);         
+	itoa( valor, numeroEnString, 10);         
 	uartWriteString( UART_USB, numeroEnString );  
 	uartWriteString( UART_USB, "\r\n" );  
-    
+
 	uartWriteString( UART_USB, "2) Configurar velocidad de apertura o cerrado de puertas (seg):  " );
 	valor = velAbreCierraPuerta / 1000;
-	itoa_2( valor, numeroEnString, 10);         
+	itoa( valor, numeroEnString, 10);         
 	uartWriteString( UART_USB, numeroEnString );  
 	uartWriteString( UART_USB, "\r\n" );    
-    
+
 	uartWriteString( UART_USB, "3) Configurar cantidad maxima de pisos (1 a 20):  " );
-	itoa_2( maximoDePisos, numeroEnString, 10);         
+	itoa( maximoDePisos, numeroEnString, 10);         
 	uartWriteString( UART_USB, numeroEnString );  
 	uartWriteString( UART_USB, "\r\n" );    
-    
+
 	uartWriteString( UART_USB, "4) Configurar cantidad maxima de subsuelos (0 a 5):  " );
-	itoa_2( maximoDeSubsuelos, numeroEnString, 10);         
+	itoa( maximoDeSubsuelos, numeroEnString, 10);         
 	uartWriteString( UART_USB, numeroEnString );  
 	uartWriteString( UART_USB, "\r\n" );    
 
-
-
-
-    uartWriteString( UART_USB, "5) Salir del modo configuracion.\r\n" );
+	uartWriteString( UART_USB, "5) Salir del modo configuracion.\r\n" );
 	flagMenu = 1;
 	}
-	if (!flagDatoMenu) {
-		if( uartReadByte( UART_USB, &receivedByte ) ) {
-			datoRecibido = receivedByte; 
-			flagDatoMenu = 1;
-			//AGREGAR UN CLEAR DE PANTALLA ACÁ.
-    	}
+
+if (!flagDatoMenu) {
+	if( uartReadByte( UART_USB, &receivedByte ) ) {
+		datoRecibido = receivedByte; 
+		flagDatoMenu = 1;
+		//AGREGAR UN CLEAR DE PANTALLA ACÁ.
 	}
-	
-    switch (datoRecibido)
+}
+
+
+switch (datoRecibido)
 	{
-    
-        case 1:
+	case 1:
 		if (!flagCase1) {
 			uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 			uartWriteString( UART_USB, "Ingrese la velocidad entre piso y piso en segundos:\r\n" );
 			flagCase1 = 1;
 			}
-                if( uartReadByte( UART_USB, &receivedByte ) ) {
+		if( uartReadByte( UART_USB, &receivedByte ) ) {
 			if (receivedByte)
 				{
 				velPisoPiso = receivedByte * 1000;
@@ -208,72 +172,84 @@ static uint32_t datoRecibido = 0;
 				datoRecibido = 0;
 				}
 			}
-            break;
-                
-        case 2:
+	    break;
+		
+	case 2:
 		if (!flagCase2) {
 			uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 			uartWriteString( UART_USB, "Ingrese la velocidad de apertura o cerrado de puertas en segundos:\r\n" );
 			flagCase2 = 1;
 			}
-                if( uartReadByte( UART_USB, &receivedByte ) ) {
+		if( uartReadByte( UART_USB, &receivedByte ) ) {
 			if (receivedByte)
 				{
 				velAbreCierraPuerta = receivedByte * 1000;
 				flagMenu = 0;
-				flagCase1 = 0;
+				flagCase2 = 0;
 				flagDatoMenu = 0;
 				datoRecibido = 0;
 				}
 			}
-            break;
-            
-        case 3:
+	    break;
+	    
+	case 3:
 		if (!flagCase3) {
 			uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 			uartWriteString( UART_USB, "Ingrese la cantidad de pisos (1 a 20):\r\n" );
 			flagCase3 = 1;
 			}
-                if( uartReadByte( UART_USB, &receivedByte ) ) {
-                    if (receivedByte >= 1 && receivedByte <= 20) {
-                        maximoDePisos = receivedByte;
+		if( uartReadByte( UART_USB, &receivedByte ) ) {
+		    if ((receivedByte >= 1) && (receivedByte <= 20)) {
+			maximoDePisos = receivedByte;
 			flagMenu = 0;
-			flagCase1 = 0;
+			flagCase3 = 0;
 			flagDatoMenu = 0;
 			datoRecibido = 0;
 			}
-                }
-            break;
-            
-            
-        case 4:
+		}
+	    break;
+	    
+	    
+	case 4:
 		if (!flagCase4) {
 			uartWriteString( UART_USB, "\x1b[2J\x1b[H" );  	
 			uartWriteString( UART_USB, "Ingrese la cantidad de subsuelos (0 a 5):\r\n" );
 			flagCase4 = 1;
 			}
-                if( uartReadByte( UART_USB, &receivedByte ) ) {
-                    if (receivedByte >= 0 && receivedByte <= 5) {
-                        maximoDeSubsuelos = receivedByte;
-                        flagMenu = 0;
-			flagCase1 = 0;
+		if( uartReadByte( UART_USB, &receivedByte ) ) {
+		    if ((receivedByte >= 0) && (receivedByte <= 5)) {
+			maximoDeSubsuelos = receivedByte;
+			flagMenu = 0;
+			flagCase4 = 0;
 			flagDatoMenu = 0;
 			datoRecibido = 0;
 			}
-                }
-            break;
-            
-        case 5:
-                //MANEJAR UN FLAG U OTRA OPCION PARA SALIR DEL MODO CONFIGURACION
+		}
+	    break;
+	    
+	case 5:
+		//MANEJAR UN FLAG U OTRA OPCION PARA SALIR DEL MODO CONFIGURACION
 		uartWriteString( UART_USB, "\x1b[2J\x1b[H" );
+		flagMenu = 0;
+		flagCase1 = 0;
+		flagCase2 = 0;
+		flagCase3 = 0;
+		flagCase4 = 0;
+		flagDatoMenu = 0;
+		datoRecibido = 0;
 		salida = 1;
-            break;
-	
+	    break;
+
 	default:
 		flagDatoMenu = 0;
 		break;
-}
-
+	}
 return salida;
 }
+
+
+
+
+
+
 /*==================[fin del archivo]========================================*/

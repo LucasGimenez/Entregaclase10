@@ -54,8 +54,8 @@
 
 
 /*==================[definiciones de datos globales]=========================*/
-//SACAR ESTAS VARIABLES
-delay_t timSerial;
+
+
 
 
 
@@ -77,41 +77,23 @@ extern void InicializarMEFAsc(void);
 extern void InicializarMEFPuerta(void);
 extern void ActualizarMEFAsc(void);
 extern void ActualizaMEFPuerta(void);
-
+extern void ActualizaInfoRemoto(void);
+extern void ConfiguraRemoto(void);
 
 
 /*==================[declaraciones de funciones internas]====================*/
+bool_t IntTimer (void *ptr);
 bool_t IntTimer (void *ptr);
 
 
 
 
 
-
-
 //*************************************************************************************************
-//			Interrupción cada 5ms
+//		FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE ENCENDIDO O RESET.
 //*************************************************************************************************
-bool_t IntTimer (void *ptr)
+int main( void )
 {
-
-
-// Llama a la rutina que actualiza el display de 4 digitos de 7 segmentos.
-ActualizarDisplay();
-	
-
-return 1;
-}
-//*************************************************************************************************
-//*************************************************************************************************
-
-
-
-/*==================[funcion principal]======================================*/
-
-// FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE ENCENDIDO O RESET.
-int main( void ){
-
 // ---------- CONFIGURACIONES ------------------------------
 // Inicializar y configurar la plataforma
 boardConfig();   
@@ -132,85 +114,49 @@ InicializarMEFAsc();
 // Se inicializa la MEF que maneja la puerta del ascensor.
 InicializarMEFPuerta();
 
-
-
-// UART_USB a 115200 baudios.
-uartConfig( UART_USB, 115200 );
-delayConfig(&timSerial, 200);   
-
+// Se configura el sistema remoto.
+ConfiguraRemoto();
 
 
 
 // ---------- REPETIR POR SIEMPRE --------------------------
 while(TRUE)
-{      
+	{      
 
-// Función Actualizar MEF del Teclado.
-ActualizarMEF_tecladoMatricial();
+	// Función Actualizar MEF del Teclado.
+	ActualizarMEF_tecladoMatricial();
 
+	// Función Actualizar MEF del Ascensor.
+	ActualizarMEFAsc();
 
-// Función Actualizar MEF del Ascensor.
-ActualizarMEFAsc();
+	// Función Actualizar MEF de las Puertas.
+	ActualizaMEFPuerta();
 
-
-// Función Actualizar MEF de las Puertas.
-ActualizaMEFPuerta();
-
-
-
-
-
-
-
-
-// Codigo de prueba, presionando la tecla 4 se cargan valores en las 10 posiciones del buffer de pisos
-// y de fija indice a 10.
-if (delayRead(&timSerial))
-	{
-	if (estadoActualAsc != MODO_CONFIGURACION)
-		EnviaEstadoInterno();
-	
-	if (!gpioRead(TEC4))
-		{
-		almacenarPisos[0] = 6;
-		almacenarPisos[1] = 9;
-		almacenarPisos[2] = 12;
-		almacenarPisos[3] = 17;
-		almacenarPisos[4] = 20;
-		almacenarPisos[5] = 10;
-		almacenarPisos[6] = -5;
-		almacenarPisos[7] = 5;
-		almacenarPisos[8] = -3;
-		almacenarPisos[9] = 8;
-		indice = 10;
-		}
-	}
-} 
-
+	// Función actualizar la informacion externa del estado del Ascensor.
+	ActualizaInfoRemoto();
+	} 
 
 return 0;
 }
+//*************************************************************************************************
+//*************************************************************************************************
 
-/*==================[definiciones de funciones internas]=====================*/
 
-/*==================[definiciones de funciones externas]=====================*/
+
+
+//*************************************************************************************************
+//			Interrupción cada 5ms
+//*************************************************************************************************
+bool_t IntTimer (void *ptr)
+{
+
+// Llama a la rutina que actualiza el display de 4 digitos de 7 segmentos.
+ActualizarDisplay();
+
+return 1;
+}
+//*************************************************************************************************
+//*************************************************************************************************
+
 
 /*==================[fin del archivo]========================================*/
-
-
-
-
-
-
-
-
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-// AL INGRESAR AL EL ESTADO SE EJECUTA POR UNICA VEZ:
-// SALIDA EN EL ESTADO:
-// CAMBIO DE ESTADO:
-
-
-//*********************************************************************************************************************
-//*********************************************************************************************************************

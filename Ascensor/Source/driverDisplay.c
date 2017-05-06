@@ -238,7 +238,7 @@ void ActualizarDisplay(void)
 uint8_t valores[3];
 
 // Esta en planta baja?
-if (pisoActual == 0 && estadoActualAsc != SUBIENDO && estadoActualAsc != BAJANDO)
+if ((pisoActual == 0) && (estadoActualAsc != SUBIENDO) && (estadoActualAsc != BAJANDO))
 	{
 	decenasB = LETRA_P;
 	unidadesB = LETRA_b;

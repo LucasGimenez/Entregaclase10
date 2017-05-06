@@ -160,10 +160,6 @@ delayConfig(&timPisoPiso, velPisoPiso);
 
 // Resetea flag que indica ejecucion unica de bloque dentro de estado PARADO.
 Clr_AscParadoFlag;
-
-// Ver las otras variables!!!
-
-
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -182,7 +178,7 @@ estadoActualPuerta = PUERTA_CERRADA;
 // Se Configura el tiempo para el parpadeo del led de alarma indicador de puerta abierta, 0,5seg.
 delayConfig(&timAlarPuerta, TALARMAPUERTA);   
 
-// Se configura tiempo de apertura de la puerta.
+// Se configura tiempo de apertura y cierre de la puerta.
 delayConfig(&timAbreCierraPuerta, velAbreCierraPuerta);   
 
 // Se configura tiempo que queda la puerta abierta.
@@ -190,7 +186,6 @@ delayConfig(&timPuertaAbierta, TPUETAABIERTA);
 
 // Se configura tiempo que espera antes de retornar a Planta Baja.
 delayConfig(&timRetornoPB, TRETORNOPB);
-
 }
 //*********************************************************************************************************************
 //*********************************************************************************************************************
@@ -232,10 +227,6 @@ if (indice && !Ask_PideNuevoPisoFlag)
 //*********************************************************************************************************************
 void ActualizarMEFAsc(void)
 {
-
-
-	
-
 switch(estadoActualAsc)
 	{
 	case EN_PLANTA_BAJA:
@@ -253,12 +244,10 @@ switch(estadoActualAsc)
 			if (estadoActualPuerta == PUERTA_ABIERTA)
 				Set_CierraPuertasFlag;			// Pide cerrar puertas.
 			
-			
 			if (estadoActualPuerta == PUERTA_CERRADA)
 				{
 				if (pisoActual < pisoDestino)
 					{
-					
 					// El piso destino se encuentra arriba.
 					estadoActualAsc = SUBIENDO;
 					Clr_PidioAperturaFlag;
@@ -272,14 +261,12 @@ switch(estadoActualAsc)
 					}
 				}
 			}
-		
 		// Se consulta si pide modo Configuracion.
 		if (flagConfiguracion)
 			{
 			flagConfiguracion = 0;
 			estadoActualAsc = MODO_CONFIGURACION;
 			}
-
 		break;
 			
 	case SUBIENDO:
@@ -344,7 +331,6 @@ switch(estadoActualAsc)
 				Set_AscParadoFlag;
 				}
 			}
-			
 		else if (estadoActualPuerta == PUERTA_CERRADA)
 			{
 			// Consulta si hay algun piso pendiente en el buffer, si es asi lo obtiene.
@@ -405,7 +391,6 @@ switch(estadoActualAsc)
 				Clr_PidioAperturaFlag;
 				}
 			}
-
 		// SALIDA EN EL ESTADO:
 		// Se hace bajar o subir el ascensor, demorara en subir lo configurado en "velPisoPiso"
 		if (pisoActual > 0) //COMPLETAR!!! no tendria que venir el mismo piso...
@@ -419,7 +404,6 @@ switch(estadoActualAsc)
 			// El piso actual se encuentra abajo.
 			if (delayRead(&timPisoPiso))
 				pisoActual = pisoActual + 1;
-
 			}
 		
 		// CAMBIO DE ESTADO:
@@ -430,15 +414,18 @@ switch(estadoActualAsc)
 			estadoActualAsc = EN_PLANTA_BAJA;
 			gpioWrite (LED_PBDETENIDO, 1);
 			}
-
 		break;
 
 	case MODO_CONFIGURACION:
-		
 		// Secuencia de configuracion y CAMBIO DE ESTADO.
 		if (modoConfiguracion())
+			{
 			estadoActualAsc = EN_PLANTA_BAJA;
-	
+			// Se Configura el tiempo de desplazamiento del ascensor.
+			delayConfig(&timPisoPiso, velPisoPiso);   
+			// Se configura tiempo de apertura de la puerta.
+			delayConfig(&timAbreCierraPuerta, velAbreCierraPuerta);   
+			}
 		break;
 
 		
@@ -508,9 +495,7 @@ switch(estadoActualPuerta)
 			estadoActualPuerta = CERRANDO_PUERTA;		// No hay gente.
 			gpioWrite(LED_CERRANDOPUERTA, 1);
 			}
-	
 		break;
-	
 	
 	case CERRANDO_PUERTA:
 		// CAMBIO DE ESTADO:
@@ -529,7 +514,6 @@ switch(estadoActualPuerta)
 		// SALIDA EN EL ESTADO:
 		if (delayRead(&timAlarPuerta))
 			gpioToggle(LED_ALARMAPABIERTA);		// Parpadeo led que Indica alarma de puerta abierta.
-	
 		// CAMBIO DE ESTADO:
 		// Hay gente?
 		if (gpioRead(TEC1))
@@ -538,7 +522,6 @@ switch(estadoActualPuerta)
 			gpioWrite(LED_ALARMAPABIERTA, 0);
 			}
 		break;
-
 
 	default:
 		// Si "estadoActualPuerta" adquiere un valor invalido se configura un estado de recuperacion.
@@ -551,15 +534,4 @@ switch(estadoActualPuerta)
 
 
 
-
-
-//*********************************************************************************************************************
-//
-//*********************************************************************************************************************
-// AL INGRESAR AL EL ESTADO SE EJECUTA POR UNICA VEZ:
-// SALIDA EN EL ESTADO:
-// CAMBIO DE ESTADO:
-
-
-//*********************************************************************************************************************
-//*********************************************************************************************************************
+/*==================[fin del archivo]========================================*/
